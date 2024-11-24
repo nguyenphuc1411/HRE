@@ -1,0 +1,6 @@
+@HRE.WebAPI_HostAddress = http://localhost:5160
+
+GET {{HRE.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
