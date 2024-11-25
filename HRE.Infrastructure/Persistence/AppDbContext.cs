@@ -3,8 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HRE.Infrastructure.Persistence
 {
-    internal class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+    public class AppDbContext : DbContext
     {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
         #region DBSET
         public required DbSet<User> Users { get; set; }
         public required DbSet<UserToken> UserTokens { get; set; }
