@@ -1,7 +1,7 @@
 ﻿
 namespace HRE.Domain.Entities;
 
-public class AccumulationPoint
+public class UserPoint
 {
     public int Id { get; set; }
     public int CampaignId { get; set; }
@@ -10,7 +10,7 @@ public class AccumulationPoint
     public int UserId { get; set; }
     public User User { get; set; } = new();
 
-    public int TotalPoints { get; set; }
+    public int Points { get; set; }
 
     public DateTime LastUpdated { get; set; }
 }

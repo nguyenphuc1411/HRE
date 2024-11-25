@@ -175,7 +175,7 @@ internal class DataSeeder(AppDbContext context) : IDataSeeder
 
         // Mã hóa mật khẩu
         var passwordHasher = new PasswordHasher<User>();
-        user.PasswordHash = passwordHasher.HashPassword(user, "Phuc.1411");
+        user.Password = passwordHasher.HashPassword(user, "Phuc.1411");
 
         var roles = new List<Role>()
         {
@@ -183,9 +183,9 @@ internal class DataSeeder(AppDbContext context) : IDataSeeder
                 {
                     RoleName = "SYSTEMUSER",
                     Description = "Vai trò người dùng hệ thống",
-                    UserRoles = new List<UserRole>
+                    Users = new List<User>
                     {
-                        new(){User = user}
+                        user
                     }
                 },
                  new Role

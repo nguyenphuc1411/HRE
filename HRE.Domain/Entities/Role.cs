@@ -11,6 +11,6 @@ public class Role
     [Column(TypeName = "Nvarchar(255)")]
     public string Description { get; set; } = default!;
 
-    public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     public ICollection<RolePermission> RolePermissions { get; set; }= new List<RolePermission>();
+    public ICollection<User> Users { get; set; }= new List<User>();
 }

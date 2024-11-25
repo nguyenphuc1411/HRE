@@ -10,7 +10,8 @@ public class SpinHistory
     public int UserId { get; set; }
     public User User { get; set; }= new();
 
-    public int PointsUsed { get; set; }
+    public int PointsAtSpin { get; set; }
+    public bool SpinResult { get; set; }
     public DateTime SpinDate { get; set; }
 
     public int? RewardId { get; set; }

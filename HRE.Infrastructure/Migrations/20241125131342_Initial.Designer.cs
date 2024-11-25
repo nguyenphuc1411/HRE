@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRE.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241125054246_Initial")]
+    [Migration("20241125131342_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -25,35 +25,6 @@ namespace HRE.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("HRE.Domain.Entities.AccumulationPoint", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CampaignId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TotalPoints")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CampaignId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AccumulationPoints");
-                });
-
             modelBuilder.Entity("HRE.Domain.Entities.Area", b =>
                 {
                     b.Property<int>("Id")
@@ -62,13 +33,17 @@ namespace HRE.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AreaName")
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("NVarchar(255)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("NVarchar(255)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AreaName")
+                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("Areas");
@@ -85,6 +60,10 @@ namespace HRE.Infrastructure.Migrations
                     b.Property<string>("CampaignName")
                         .IsRequired()
                         .HasColumnType("Nvarchar(255)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -105,52 +84,33 @@ namespace HRE.Infrastructure.Migrations
                     b.ToTable("Campaigns");
                 });
 
-            modelBuilder.Entity("HRE.Domain.Entities.CampaignGift", b =>
+            modelBuilder.Entity("HRE.Domain.Entities.CampaignGiftRule", b =>
                 {
-                    b.Property<int>("CampaignId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("GiftId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("CampaignId", "GiftId");
-
-                    b.HasIndex("GiftId");
-
-                    b.ToTable("CampaignGifts");
-                });
-
-            modelBuilder.Entity("HRE.Domain.Entities.CampaignRewardRule", b =>
-                {
-                    b.Property<int>("RewardRuleId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CampaignId")
                         .HasColumnType("int");
 
-                    b.HasKey("RewardRuleId", "CampaignId");
+                    b.Property<int>("GiftInRuleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InitialQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityGiven")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("CampaignId");
 
-                    b.ToTable("CampaignRewardRules");
-                });
+                    b.HasIndex("GiftInRuleId");
 
-            modelBuilder.Entity("HRE.Domain.Entities.CampaignSelection", b =>
-                {
-                    b.Property<int>("CampaignId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CampaignId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CampaignSelections");
+                    b.ToTable("CampaignGiftRules");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.Gift", b =>
@@ -177,22 +137,63 @@ namespace HRE.Infrastructure.Migrations
                     b.ToTable("Gifts");
                 });
 
-            modelBuilder.Entity("HRE.Domain.Entities.GiftRewardRule", b =>
+            modelBuilder.Entity("HRE.Domain.Entities.GiftInRule", b =>
                 {
-                    b.Property<int>("RewardRuleId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("GiftId")
                         .HasColumnType("int");
 
-                    b.Property<int>("WinningPercentage")
+                    b.Property<int>("Probability")
                         .HasColumnType("int");
 
-                    b.HasKey("RewardRuleId", "GiftId");
+                    b.Property<int>("RuleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("GiftId");
 
-                    b.ToTable("GiftRewardRules");
+                    b.HasIndex("RuleId");
+
+                    b.ToTable("GiftInRules");
+                });
+
+            modelBuilder.Entity("HRE.Domain.Entities.GiftRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("Nvarchar(255)");
+
+                    b.Property<int>("MaxPoints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinPoints")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RuleName")
+                        .IsRequired()
+                        .HasColumnType("Nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RuleName")
+                        .IsUnique();
+
+                    b.ToTable("GetRules");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.Location", b =>
@@ -203,36 +204,36 @@ namespace HRE.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("District")
+                    b.Property<string>("Addesss")
                         .IsRequired()
-                        .HasColumnType("Nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("AreaId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("Latitude")
                         .HasColumnType("Decimal(9,6)");
 
-                    b.Property<string>("LocationName")
+                    b.Property<decimal>("Longitude")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("Nvarchar(255)");
 
-                    b.Property<decimal>("Longitude")
-                        .HasColumnType("Decimal(9,6)");
-
-                    b.Property<int>("ProvinceId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Ward")
+                    b.Property<string>("Province_City")
                         .IsRequired()
                         .HasColumnType("Nvarchar(100)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LocationName")
-                        .IsUnique();
+                    b.HasIndex("AreaId");
 
-                    b.HasIndex("ProvinceId");
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Locations");
                 });
@@ -297,31 +298,6 @@ namespace HRE.Infrastructure.Migrations
                     b.ToTable("PermissionGroups");
                 });
 
-            modelBuilder.Entity("HRE.Domain.Entities.Province", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AreaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProvinceName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AreaId");
-
-                    b.HasIndex("ProvinceName")
-                        .IsUnique();
-
-                    b.ToTable("Provinces");
-                });
-
             modelBuilder.Entity("HRE.Domain.Entities.RecyclingMachine", b =>
                 {
                     b.Property<int>("Id")
@@ -330,26 +306,18 @@ namespace HRE.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Capacity")
-                        .IsRequired()
-                        .HasColumnType("Nvarchar(20)");
+                    b.Property<int>("AccessCount")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<bool>("BinStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastAccess")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastLocation")
-                        .HasColumnType("Nvarchar(255)");
 
                     b.Property<string>("MachineCode")
                         .IsRequired()
                         .HasColumnType("Varchar(100)");
-
-                    b.Property<string>("MachineName")
-                        .IsRequired()
-                        .HasColumnType("Nvarchar(255)");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
@@ -362,39 +330,6 @@ namespace HRE.Infrastructure.Migrations
                     b.ToTable("RecyclingMachines");
                 });
 
-            modelBuilder.Entity("HRE.Domain.Entities.RedemptionHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasColumnType("Nvarchar(10)");
-
-                    b.Property<DateTime>("ActionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PerformBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Reason")
-                        .HasColumnType("Nvarchar(255)");
-
-                    b.Property<int>("RedemptionID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PerformBy");
-
-                    b.HasIndex("RedemptionID");
-
-                    b.ToTable("RedemptionHistories");
-                });
-
             modelBuilder.Entity("HRE.Domain.Entities.Reward", b =>
                 {
                     b.Property<int>("Id")
@@ -404,6 +339,9 @@ namespace HRE.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("GeneratedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("GiftId")
@@ -437,9 +375,6 @@ namespace HRE.Infrastructure.Migrations
                     b.Property<string>("CustomerPhone")
                         .HasColumnType("Varchar(11)");
 
-                    b.Property<int>("RedeemedBy")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("RedemptionDate")
                         .HasColumnType("datetime2");
 
@@ -450,17 +385,20 @@ namespace HRE.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("Nvarchar(10)");
 
-                    b.HasKey("Id");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("RedeemedBy");
+                    b.HasKey("Id");
 
                     b.HasIndex("RewardId")
                         .IsUnique();
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("RewardRedemptions");
                 });
 
-            modelBuilder.Entity("HRE.Domain.Entities.RewardRule", b =>
+            modelBuilder.Entity("HRE.Domain.Entities.RewardReturnHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -468,25 +406,26 @@ namespace HRE.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("ActionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EndRange")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RuleName")
-                        .IsRequired()
+                    b.Property<string>("Reason")
                         .HasColumnType("Nvarchar(255)");
 
-                    b.Property<int>("StartRange")
+                    b.Property<int>("RedemptionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RuleName")
+                    b.HasIndex("RedemptionId")
                         .IsUnique();
 
-                    b.ToTable("RewardRules");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RewardReturnHistories");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.Robot", b =>
@@ -500,31 +439,29 @@ namespace HRE.Infrastructure.Migrations
                     b.Property<int?>("BatteryLevel")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("LastAccess")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("LastLocation")
-                        .HasColumnType("Nvarchar(255)");
+                    b.Property<int?>("LocationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("RobotCode")
                         .IsRequired()
                         .HasColumnType("Varchar(100)");
 
-                    b.Property<string>("RobotName")
+                    b.Property<string>("RobotType")
                         .IsRequired()
-                        .HasColumnType("NVarchar(255)");
+                        .HasColumnType("Varchar(20)");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("Varchar(12)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
 
                     b.HasIndex("RobotCode")
                         .IsUnique();
@@ -597,7 +534,7 @@ namespace HRE.Infrastructure.Migrations
                     b.Property<int>("CampaignId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PointsUsed")
+                    b.Property<int>("PointsAtSpin")
                         .HasColumnType("int");
 
                     b.Property<int?>("RewardId")
@@ -605,6 +542,9 @@ namespace HRE.Infrastructure.Migrations
 
                     b.Property<DateTime>("SpinDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("SpinResult")
+                        .HasColumnType("bit");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -630,26 +570,37 @@ namespace HRE.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("Varchar(255)");
 
                     b.Property<string>("Fullname")
                         .IsRequired()
-                        .HasColumnType("NVarchar(255)");
+                        .HasColumnType("Varchar(255)");
 
-                    b.Property<string>("PasswordHash")
+                    b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("Varchar(max)");
+                        .HasColumnType("NVarchar(max)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("Varchar(255)");
+                        .HasColumnType("Varchar(100)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("RoleId");
 
                     b.HasIndex("Username")
                         .IsUnique();
@@ -657,19 +608,33 @@ namespace HRE.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("HRE.Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("HRE.Domain.Entities.UserPoint", b =>
                 {
-                    b.Property<int>("RoleId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Points")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("RoleId", "UserId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserPoints");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.UserToken", b =>
@@ -708,25 +673,6 @@ namespace HRE.Infrastructure.Migrations
                     b.ToTable("UserTokens");
                 });
 
-            modelBuilder.Entity("HRE.Domain.Entities.AccumulationPoint", b =>
-                {
-                    b.HasOne("HRE.Domain.Entities.Campaign", "Campaign")
-                        .WithMany("AccumulationPoints")
-                        .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("HRE.Domain.Entities.User", "User")
-                        .WithMany("AccumulationPoints")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Campaign");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("HRE.Domain.Entities.Campaign", b =>
                 {
                     b.HasOne("HRE.Domain.Entities.Location", "Location")
@@ -738,91 +684,53 @@ namespace HRE.Infrastructure.Migrations
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("HRE.Domain.Entities.CampaignGift", b =>
+            modelBuilder.Entity("HRE.Domain.Entities.CampaignGiftRule", b =>
                 {
                     b.HasOne("HRE.Domain.Entities.Campaign", "Campaign")
-                        .WithMany("CampaignGifts")
+                        .WithMany("CampaignGiftRules")
                         .HasForeignKey("CampaignId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("HRE.Domain.Entities.GiftInRule", "GiftInRule")
+                        .WithMany("CampaignGiftRules")
+                        .HasForeignKey("GiftInRuleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Campaign");
+
+                    b.Navigation("GiftInRule");
+                });
+
+            modelBuilder.Entity("HRE.Domain.Entities.GiftInRule", b =>
+                {
                     b.HasOne("HRE.Domain.Entities.Gift", "Gift")
-                        .WithMany("CampaignGifts")
+                        .WithMany("GiftInRules")
                         .HasForeignKey("GiftId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Campaign");
-
-                    b.Navigation("Gift");
-                });
-
-            modelBuilder.Entity("HRE.Domain.Entities.CampaignRewardRule", b =>
-                {
-                    b.HasOne("HRE.Domain.Entities.Campaign", "Campaign")
-                        .WithMany("CampaignRewardRules")
-                        .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("HRE.Domain.Entities.RewardRule", "RewardRule")
-                        .WithMany("CampaignRewardRules")
-                        .HasForeignKey("RewardRuleId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Campaign");
-
-                    b.Navigation("RewardRule");
-                });
-
-            modelBuilder.Entity("HRE.Domain.Entities.CampaignSelection", b =>
-                {
-                    b.HasOne("HRE.Domain.Entities.Campaign", "Campaign")
-                        .WithMany("CampaignSelections")
-                        .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("HRE.Domain.Entities.User", "User")
-                        .WithMany("CampaignSelections")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Campaign");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("HRE.Domain.Entities.GiftRewardRule", b =>
-                {
-                    b.HasOne("HRE.Domain.Entities.Gift", "Gift")
-                        .WithMany("GiftRewardRules")
-                        .HasForeignKey("GiftId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("HRE.Domain.Entities.RewardRule", "RewardRule")
-                        .WithMany("GiftRewardRules")
-                        .HasForeignKey("RewardRuleId")
+                    b.HasOne("HRE.Domain.Entities.GiftRule", "GiftRule")
+                        .WithMany("GiftInRules")
+                        .HasForeignKey("RuleId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Gift");
 
-                    b.Navigation("RewardRule");
+                    b.Navigation("GiftRule");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.Location", b =>
                 {
-                    b.HasOne("HRE.Domain.Entities.Province", "Province")
+                    b.HasOne("HRE.Domain.Entities.Area", "Area")
                         .WithMany("Locations")
-                        .HasForeignKey("ProvinceId")
+                        .HasForeignKey("AreaId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Province");
+                    b.Navigation("Area");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.MachineCampaign", b =>
@@ -855,36 +763,6 @@ namespace HRE.Infrastructure.Migrations
                     b.Navigation("PermissionGroup");
                 });
 
-            modelBuilder.Entity("HRE.Domain.Entities.Province", b =>
-                {
-                    b.HasOne("HRE.Domain.Entities.Area", "Area")
-                        .WithMany("Provinces")
-                        .HasForeignKey("AreaId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Area");
-                });
-
-            modelBuilder.Entity("HRE.Domain.Entities.RedemptionHistory", b =>
-                {
-                    b.HasOne("HRE.Domain.Entities.User", "User")
-                        .WithMany("RedemptionHistories")
-                        .HasForeignKey("PerformBy")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("HRE.Domain.Entities.RewardRedemption", "RewardRedemption")
-                        .WithMany("RedemptionHistories")
-                        .HasForeignKey("RedemptionID")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("RewardRedemption");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("HRE.Domain.Entities.Reward", b =>
                 {
                     b.HasOne("HRE.Domain.Entities.Gift", "Gift")
@@ -898,21 +776,50 @@ namespace HRE.Infrastructure.Migrations
 
             modelBuilder.Entity("HRE.Domain.Entities.RewardRedemption", b =>
                 {
-                    b.HasOne("HRE.Domain.Entities.User", "User")
-                        .WithMany("RewardRedemptions")
-                        .HasForeignKey("RedeemedBy")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("HRE.Domain.Entities.Reward", "Reward")
                         .WithOne("RewardRedemption")
                         .HasForeignKey("HRE.Domain.Entities.RewardRedemption", "RewardId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("HRE.Domain.Entities.User", "User")
+                        .WithMany("RewardRedemptions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Reward");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HRE.Domain.Entities.RewardReturnHistory", b =>
+                {
+                    b.HasOne("HRE.Domain.Entities.RewardRedemption", "RewardRedemption")
+                        .WithOne("RewardReturnHistory")
+                        .HasForeignKey("HRE.Domain.Entities.RewardReturnHistory", "RedemptionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("HRE.Domain.Entities.User", "User")
+                        .WithMany("RewardReturnHistories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("RewardRedemption");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HRE.Domain.Entities.Robot", b =>
+                {
+                    b.HasOne("HRE.Domain.Entities.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.RobotCampaign", b =>
@@ -979,21 +886,32 @@ namespace HRE.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("HRE.Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("HRE.Domain.Entities.User", b =>
                 {
                     b.HasOne("HRE.Domain.Entities.Role", "Role")
-                        .WithMany("UserRoles")
+                        .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("HRE.Domain.Entities.UserPoint", b =>
+                {
+                    b.HasOne("HRE.Domain.Entities.Campaign", "Campaign")
+                        .WithMany("UserPoints")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("HRE.Domain.Entities.User", "User")
-                        .WithMany("UserRoles")
+                        .WithMany("UserPoints")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Role");
+                    b.Navigation("Campaign");
 
                     b.Navigation("User");
                 });
@@ -1011,33 +929,37 @@ namespace HRE.Infrastructure.Migrations
 
             modelBuilder.Entity("HRE.Domain.Entities.Area", b =>
                 {
-                    b.Navigation("Provinces");
+                    b.Navigation("Locations");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.Campaign", b =>
                 {
-                    b.Navigation("AccumulationPoints");
-
-                    b.Navigation("CampaignGifts");
-
-                    b.Navigation("CampaignRewardRules");
-
-                    b.Navigation("CampaignSelections");
+                    b.Navigation("CampaignGiftRules");
 
                     b.Navigation("MachineCampaigns");
 
                     b.Navigation("RobotCampaigns");
 
                     b.Navigation("SpinHistories");
+
+                    b.Navigation("UserPoints");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.Gift", b =>
                 {
-                    b.Navigation("CampaignGifts");
-
-                    b.Navigation("GiftRewardRules");
+                    b.Navigation("GiftInRules");
 
                     b.Navigation("Rewards");
+                });
+
+            modelBuilder.Entity("HRE.Domain.Entities.GiftInRule", b =>
+                {
+                    b.Navigation("CampaignGiftRules");
+                });
+
+            modelBuilder.Entity("HRE.Domain.Entities.GiftRule", b =>
+                {
+                    b.Navigation("GiftInRules");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.Location", b =>
@@ -1055,11 +977,6 @@ namespace HRE.Infrastructure.Migrations
                     b.Navigation("Permissions");
                 });
 
-            modelBuilder.Entity("HRE.Domain.Entities.Province", b =>
-                {
-                    b.Navigation("Locations");
-                });
-
             modelBuilder.Entity("HRE.Domain.Entities.RecyclingMachine", b =>
                 {
                     b.Navigation("MachineCampaigns");
@@ -1075,14 +992,7 @@ namespace HRE.Infrastructure.Migrations
 
             modelBuilder.Entity("HRE.Domain.Entities.RewardRedemption", b =>
                 {
-                    b.Navigation("RedemptionHistories");
-                });
-
-            modelBuilder.Entity("HRE.Domain.Entities.RewardRule", b =>
-                {
-                    b.Navigation("CampaignRewardRules");
-
-                    b.Navigation("GiftRewardRules");
+                    b.Navigation("RewardReturnHistory");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.Robot", b =>
@@ -1094,22 +1004,18 @@ namespace HRE.Infrastructure.Migrations
                 {
                     b.Navigation("RolePermissions");
 
-                    b.Navigation("UserRoles");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.User", b =>
                 {
-                    b.Navigation("AccumulationPoints");
-
-                    b.Navigation("CampaignSelections");
-
-                    b.Navigation("RedemptionHistories");
-
                     b.Navigation("RewardRedemptions");
+
+                    b.Navigation("RewardReturnHistories");
 
                     b.Navigation("SpinHistories");
 
-                    b.Navigation("UserRoles");
+                    b.Navigation("UserPoints");
 
                     b.Navigation("UserTokens");
                 });

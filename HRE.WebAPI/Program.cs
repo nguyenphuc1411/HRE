@@ -1,3 +1,6 @@
+using HRE.Application.Interfaces;
+using HRE.Application.Mappings;
+using HRE.Application.Services;
 using HRE.Infrastructure.Extentions;
 using HRE.Infrastructure.Seeders;
 
@@ -6,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+builder.Services.AddScoped<IRobotService, RobotService>();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -26,6 +33,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
