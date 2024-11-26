@@ -18,5 +18,12 @@ public static class ServiceCollectionExtentions
         services.AddScoped<IDataSeeder, DataSeeder>();
 
         services.AddScoped<IRobotRepository, RobotRepository>();
+        services.AddScoped<IRMRepository, RMRepository>();
+        services.AddScoped<IAreaRepository, AreaRepository>();
+        services.AddScoped<ILocationRepository, LocationRepository>();
+        services.AddScoped<IGiftRepository, GiftRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
+        services.AddScoped<ICampaignRepository, CampaignRepository>();
     }
 }

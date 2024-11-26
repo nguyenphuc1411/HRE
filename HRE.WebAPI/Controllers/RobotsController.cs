@@ -1,6 +1,5 @@
 ﻿using HRE.Application.DTOs.Robot;
 using HRE.Application.Interfaces;
-using HRE.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

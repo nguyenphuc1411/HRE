@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HRE.Application.DTOs.RecyclingMachine;
 using HRE.Application.DTOs.Robot;
 using HRE.Domain.Entities;
 
@@ -13,5 +14,10 @@ public class MappingProfile:Profile
         CreateMap<UpdateRobotDTO, Robot>();       
 
         CreateMap<Robot,GetRobotDTO>();
+
+        // Recycling Machine
+        CreateMap<CreateRMDTO,RecyclingMachine>();
+        CreateMap<UpdateRMDTO, RecyclingMachine>();
+        CreateMap<RecyclingMachine,GetRMDTO>();
     }
 }

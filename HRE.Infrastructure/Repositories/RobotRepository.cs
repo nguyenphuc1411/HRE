@@ -15,18 +15,18 @@ public class RobotRepository: IRobotRepository
         this.context = context;
     }
 
-    public async Task<Robot> Create(Robot robot)
+    public async Task<Robot> Create(Robot entity)
     {
-        await context.Robots.AddAsync(robot);
+        await context.Robots.AddAsync(entity);
         await context.SaveChangesAsync();
-        return robot;
+        return entity;
     }
 
     public async Task<bool> Delete(int id)
     {
-        var robot = await context.Robots.FindAsync(id);
-        if(robot == null) return false;
-        context.Robots.Remove(robot);
+        var entityToDelete = await context.Robots.FindAsync(id);
+        if(entityToDelete == null) return false;
+        context.Robots.Remove(entityToDelete);
         return await context.SaveChangesAsync()>0;
     }
 
@@ -40,12 +40,12 @@ public class RobotRepository: IRobotRepository
         return await context.Robots.FindAsync(id);     
     }
 
-    public async Task<bool> Update(Robot robot)
+    public async Task<bool> Update(Robot entity)
     {
-        var robotToUpdate = await context.Robots.FindAsync(robot.Id);
-        if(robotToUpdate == null) return false;
+        var entityToUpdate = await context.Robots.FindAsync(entity.Id);
+        if(entityToUpdate == null) return false;
 
-        context.Entry(robotToUpdate).CurrentValues.SetValues(robot);
+        context.Entry(entityToUpdate).CurrentValues.SetValues(entity);
 
         return await context.SaveChangesAsync() > 0;
     }

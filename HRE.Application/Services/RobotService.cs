@@ -16,9 +16,9 @@ public class RobotService:IRobotService
         this.mapper = mapper;
     }
 
-    public async Task<Robot> Create(CreateRobotDTO robot)
+    public async Task<Robot> Create(CreateRobotDTO entity)
     {
-        var result = await robotRepository.Create(mapper.Map<Robot>(robot));
+        var result = await robotRepository.Create(mapper.Map<Robot>(entity));
         return result;
     }
 
@@ -40,8 +40,8 @@ public class RobotService:IRobotService
         return mapper.Map<GetRobotDTO>(robot);
     }
 
-    public async Task<bool> Update(UpdateRobotDTO robot)
+    public async Task<bool> Update(UpdateRobotDTO entity)
     {
-        return await robotRepository.Update(mapper.Map<Robot>(robot));
+        return await robotRepository.Update(mapper.Map<Robot>(entity));
     }
 }

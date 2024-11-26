@@ -5,11 +5,11 @@ namespace HRE.Application.Interfaces;
 
 public interface IRobotService
 {
-    Task<Robot> Create(CreateRobotDTO robot);
+    Task<Robot> Create(CreateRobotDTO entity);
 
     Task<GetRobotDTO> GetByID(int id);
     Task<List<GetRobotDTO>> GetAll();
 
-    Task<bool> Update(UpdateRobotDTO robot);
+    Task<bool> Update(UpdateRobotDTO entity);
     Task<bool> Delete(int id);
 }

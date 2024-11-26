@@ -12,5 +12,8 @@ public class RecyclingMachine
     public bool BinStatus { get; set; } = false;
     public int AccessCount { get; set; } = 0;
     public DateTime DateAdded { get; set; } = DateTime.Now;
+
+    public int? LocationId { get; set; }
+    public Location? Location { get; set; }
     public ICollection<MachineCampaign> MachineCampaigns { get; set; } = new List<MachineCampaign>();
 }
