@@ -9,7 +9,7 @@ public class Permission
     public string PermissionName { get; set; } = default!;
 
     public int GroupId { get; set; }
-    public PermissionGroup PermissionGroup { get; set; } = new();
+    public PermissionGroup PermissionGroup { get; set; } = default!;
 
-    public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
+    public ICollection<RolePermission> RolePermissions { get; set; } = default!;
 }

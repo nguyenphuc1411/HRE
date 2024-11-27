@@ -6,7 +6,7 @@ public class Reward
 {
     public int Id { get; set; }
     public int GiftId { get; set; }
-    public Gift Gift { get; set; } = new();
+    public Gift Gift { get; set; } = default!;
 
     [Column(TypeName = "varchar(max)")]
     public string QRCode { get; set; } = default!;
@@ -15,6 +15,6 @@ public class Reward
 
     public DateTime GeneratedAt { get; set; } = DateTime.Now;
 
-    public SpinHistory SpinHistory { get; set; } = new();
+    public SpinHistory SpinHistory { get; set; } = default!;
     public RewardRedemption? RewardRedemption { get; set; }
 }

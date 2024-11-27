@@ -17,7 +17,7 @@ public class Location
     public decimal Latitude { get; set; }
     public DateTime DateAdded { get; set; } = DateTime.Now;
 
-    public int AreaId { get; set; }
-    public Area Area { get; set; } = new();
-    public ICollection<Campaign> Campaigns { get; set; } = new List<Campaign>();
+    public int? AreaId { get; set; }
+    public Area? Area { get; set; } 
+    public ICollection<Campaign> Campaigns { get; set; } = default!;
 }

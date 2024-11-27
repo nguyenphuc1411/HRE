@@ -16,5 +16,5 @@ public class Robot
 
     public int? LocationId { get; set; }
     public Location? Location { get; set; }
-    public ICollection<RobotCampaign> RobotCampaigns { get; set; } = new List<RobotCampaign>();
+    public ICollection<RobotCampaign> RobotCampaigns { get; set; } = default!;
 }

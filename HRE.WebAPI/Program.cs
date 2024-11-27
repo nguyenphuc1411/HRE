@@ -14,7 +14,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<IRobotService, RobotService>();
 builder.Services.AddScoped<IRecyclingMachineService, RecyclingMachineService>();
-builder.Services.AddScoped<IRoleService, IRoleService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<ILocationService, LocationService>();

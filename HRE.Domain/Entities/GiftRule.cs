@@ -14,5 +14,5 @@ public class GiftRule
     public string Description { get; set; } = default!;
     public DateTime DateAdded { get; set; } = DateTime.Now;
 
-    public ICollection<GiftInRule> GiftInRules { get; set; } = new List<GiftInRule>();
+    public ICollection<GiftInRule> GiftInRules { get; set; } = default!;
 }

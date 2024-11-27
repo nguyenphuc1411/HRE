@@ -10,5 +10,5 @@ public class Area
 
     [Column(TypeName = "NVarchar(255)")]
     public string Description { get; set; } = default!;
-    public ICollection<Location> Locations { get; set; } = new List<Location>();
+    public ICollection<Location> Locations { get; set; } = default!;
 }

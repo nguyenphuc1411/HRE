@@ -42,11 +42,7 @@ public class RobotRepository: IRobotRepository
 
     public async Task<bool> Update(Robot entity)
     {
-        var entityToUpdate = await context.Robots.FindAsync(entity.Id);
-        if(entityToUpdate == null) return false;
-
-        context.Entry(entityToUpdate).CurrentValues.SetValues(entity);
-
+        context.Robots.Update(entity);
         return await context.SaveChangesAsync() > 0;
     }
 }

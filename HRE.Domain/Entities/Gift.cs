@@ -10,6 +10,6 @@ public class Gift
     [Column(TypeName = "varchar(255)")]
     public string ImageUrl { get; set; } = default!;
 
-    public ICollection<Reward> Rewards { get; set; } = new List<Reward>();
-    public ICollection<GiftInRule> GiftInRules { get; set; }= new List<GiftInRule>();
+    public ICollection<Reward> Rewards { get; set; } = default!;
+    public ICollection<GiftInRule> GiftInRules { get; set; } = default!;
 }

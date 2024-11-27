@@ -18,11 +18,11 @@ public class User
     public DateTime DateAdded { get; set; }
 
     public int RoleId {  get; set; }
-    public Role Role { get; set; } = new();
+    public Role Role { get; set; } = default!;
 
-    public ICollection<UserPoint> UserPoints { get; set; } = new List<UserPoint>();
-    public ICollection<SpinHistory> SpinHistories { get; set; } = new List<SpinHistory>();
-    public ICollection<RewardRedemption> RewardRedemptions { get; set; }=new List<RewardRedemption>();
-    public ICollection<RewardReturnHistory> RewardReturnHistories { get; set; } = new List<RewardReturnHistory>();
-    public ICollection<UserToken> UserTokens { get; set; } = new List<UserToken>();
+    public ICollection<UserPoint> UserPoints { get; set; } = default!;
+    public ICollection<SpinHistory> SpinHistories { get; set; } = default!;
+    public ICollection<RewardRedemption> RewardRedemptions { get; set; } = default!;
+    public ICollection<RewardReturnHistory> RewardReturnHistories { get; set; } = default!;
+    public ICollection<UserToken> UserTokens { get; set; } = default!;
 }
