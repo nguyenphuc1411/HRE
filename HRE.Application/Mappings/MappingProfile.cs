@@ -4,6 +4,7 @@ using HRE.Application.DTOs.Gift;
 using HRE.Application.DTOs.Location;
 using HRE.Application.DTOs.RecyclingMachine;
 using HRE.Application.DTOs.Robot;
+using HRE.Application.DTOs.Role;
 using HRE.Domain.Entities;
 
 namespace HRE.Application.Mappings;
@@ -31,5 +32,8 @@ public class MappingProfile:Profile
 
         // Gift
         CreateMap<GiftDTO,Gift>();
+
+        // Role
+        CreateMap<RoleDTO,Role>();
     }
 }

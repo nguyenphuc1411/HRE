@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HRE.Application.DTOs.Role;
+using HRE.Application.Interfaces;
+using HRE.Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HRE.WebAPI.Controllers
 {
@@ -6,36 +9,32 @@ namespace HRE.WebAPI.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
-        // GET: api/<RolesController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IRoleService roleService;
+
+        public RolesController(IRoleService roleService)
         {
-            return new string[] { "value1", "value2" };
+            this.roleService = roleService;
         }
 
-        // GET api/<RolesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<RolesController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<Role>> Create([FromBody] RoleDTO entity)
         {
-        }
+            var result = await roleService.Create(entity);
+            if (result == null) return BadRequest();
 
-        // PUT api/<RolesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
+            return Ok(result);
         }
-
-        // DELETE api/<RolesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, [FromBody] RoleDTO entity)
         {
+            bool result = await roleService.Update(id, entity);
+            return result ? NoContent() : BadRequest();
+        }
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            bool result = await roleService.Delete(id);
+            return result ? NoContent() : BadRequest();
         }
     }
 }
