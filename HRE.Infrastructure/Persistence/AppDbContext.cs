@@ -25,7 +25,7 @@ namespace HRE.Infrastructure.Persistence
         public required DbSet<RewardRedemption> RewardRedemptions { get; set; }
         public required DbSet<RewardReturnHistory> RewardReturnHistories { get; set; }
         public required DbSet<Gift> Gifts { get; set; }
-        public required DbSet<GiftRule> GetRules { get; set; }
+        public required DbSet<GiftRule> GiftRules { get; set; }
         public required DbSet<GiftInRule> GiftInRules { get; set; }
         public required DbSet<CampaignGiftRule> CampaignGiftRules { get; set; }
         public required DbSet<Location> Locations { get; set; }

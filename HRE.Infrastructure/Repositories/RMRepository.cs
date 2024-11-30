@@ -15,11 +15,13 @@ public class RMRepository : IRMRepository
         this.context = context;
     }
 
-    public async Task<RecyclingMachine> Create(RecyclingMachine entity)
+    public async Task<RecyclingMachine?> Create(RecyclingMachine entity)
     {
         await context.RecyclingMachines.AddAsync(entity);
-        await context.SaveChangesAsync();
-        return entity;
+        var result = await context.SaveChangesAsync();
+        if (result > 0) return entity;
+
+        return null;
     }
 
     public async Task<bool> Delete(int id)

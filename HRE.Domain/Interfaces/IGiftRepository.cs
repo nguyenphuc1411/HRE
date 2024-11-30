@@ -4,7 +4,7 @@ namespace HRE.Domain.Interfaces;
 
 public interface IGiftRepository
 {
-    Task<Gift> Create(Gift entity);
+    Task<Gift?> Create(Gift entity);
 
     Task<bool> Update(Gift entity);
 

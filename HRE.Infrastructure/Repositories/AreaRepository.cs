@@ -15,11 +15,13 @@ public class AreaRepository:IAreaRepository
         this.context = context;
     }
 
-    public async Task<Area> Create(Area entity)
+    public async Task<Area?> Create(Area entity)
     {
         await context.Areas.AddAsync(entity);
-        await context.SaveChangesAsync();
-        return entity;
+        var result = await context.SaveChangesAsync();
+        if(result>0) return entity;
+
+        return null;
     }
 
     public async Task<bool> Delete(int id)

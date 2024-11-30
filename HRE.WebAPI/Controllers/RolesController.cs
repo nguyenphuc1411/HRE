@@ -36,5 +36,21 @@ namespace HRE.WebAPI.Controllers
             bool result = await roleService.Delete(id);
             return result ? NoContent() : BadRequest();
         }
+
+
+        // THÊM QUYỀN CHO ROLE VÀ XÓA QUYỀN
+        [HttpPost("{roleID}/perimssions/{permissionID}")]
+        public async Task<IActionResult> AddPermissionForRole([FromRoute] int roleID, [FromRoute] int permissionID)
+        {
+            var result = await roleService.AddPermission(roleID,permissionID);
+            if(result==null) return BadRequest();
+            return Ok(result);
+        }
+        [HttpDelete("{roleID}/perimssions/{permissionID}")]
+        public async Task<IActionResult> DeletePermissionForRole([FromRoute] int roleID, [FromRoute] int permissionID)
+        {
+            var result = await roleService.DeletePermission(roleID, permissionID);
+            return result ? NoContent(): BadRequest();
+        }
     }
 }

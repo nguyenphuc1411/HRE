@@ -5,7 +5,7 @@ namespace HRE.Application.Interfaces;
 
 public interface IRecyclingMachineService
 {
-    Task<RecyclingMachine> Create(CreateRMDTO entity);
+    Task<RecyclingMachine?> Create(CreateRMDTO entity);
     //Task<GetRobotDTO> GetByID(int id);
     Task<List<RecyclingMachine>> GetAll();
 

@@ -5,7 +5,7 @@ namespace HRE.Domain.Interfaces;
 
 public interface IRoleRepository
 {
-    Task<Role> Create(Role entity);
+    Task<Role?> Create(Role entity);
 
     Task<bool> Update(Role entity);
 
@@ -14,4 +14,8 @@ public interface IRoleRepository
     Task<Role?> GetByID(int id);
 
     Task<List<Role>> GetAll();
+
+    Task<RolePermission?> AddPermission(RolePermission entity);
+
+    Task<bool> DeletePermission(int roleID,int permissionID);
 }

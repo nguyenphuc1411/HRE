@@ -4,7 +4,7 @@ namespace HRE.Domain.Interfaces;
 
 public interface IAreaRepository
 {
-    Task<Area> Create(Area entity);
+    Task<Area?> Create(Area entity);
 
     Task<bool> Update(Area entity);
 

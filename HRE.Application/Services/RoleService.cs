@@ -16,7 +16,7 @@ public class RoleService:IRoleService
         this.mapper = mapper;
     }
 
-    public async Task<Role> Create(RoleDTO entity)
+    public async Task<Role?> Create(RoleDTO entity)
     {
         var result = await roleRepository.Create(mapper.Map<Role>(entity));
         return result;
@@ -33,5 +33,22 @@ public class RoleService:IRoleService
         if (entityToUpdate == null) return false;
         mapper.Map(entity, entityToUpdate);
         return await roleRepository.Update(entityToUpdate);
+    }
+
+    // SỬ Lý Permission
+
+    public async Task<RolePermission?> AddPermission(int roleID, int permissionID)
+    {
+        var newEntity = new RolePermission()
+        {
+            RoleId = roleID,
+            PermissionId = permissionID
+        };
+        return await roleRepository.AddPermission(newEntity);
+    }
+
+    public async Task<bool> DeletePermission(int roleID, int permissionID)
+    {
+        return await roleRepository.DeletePermission(roleID, permissionID);
     }
 }

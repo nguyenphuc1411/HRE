@@ -14,11 +14,13 @@ public class GiftRepository:IGiftRepository
         this.context = context;
     }
 
-    public async Task<Gift> Create(Gift entity)
+    public async Task<Gift?> Create(Gift entity)
     {
         await context.Gifts.AddAsync(entity);
-        await context.SaveChangesAsync();
-        return entity;
+        var result = await context.SaveChangesAsync();
+        if (result > 0) return entity;
+
+        return null;
     }
 
     public async Task<bool> Delete(int id)

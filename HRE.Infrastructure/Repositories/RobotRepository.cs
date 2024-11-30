@@ -15,11 +15,13 @@ public class RobotRepository: IRobotRepository
         this.context = context;
     }
 
-    public async Task<Robot> Create(Robot entity)
+    public async Task<Robot?> Create(Robot entity)
     {
         await context.Robots.AddAsync(entity);
-        await context.SaveChangesAsync();
-        return entity;
+        var result = await context.SaveChangesAsync();
+        if (result > 0) return entity;
+
+        return null;
     }
 
     public async Task<bool> Delete(int id)

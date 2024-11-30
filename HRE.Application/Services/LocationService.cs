@@ -17,7 +17,7 @@ public class LocationService : ILocationService
         this.mapper = mapper;
     }
 
-    public async Task<Location> Create(LocationDTO entity)
+    public async Task<Location?> Create(LocationDTO entity)
     {
         var result = await locationRepository.Create(mapper.Map<Location>(entity));
         return result;

@@ -15,11 +15,13 @@ public class LocationRepository : ILocationRepository
         this.context = context;
     }
 
-    public async Task<Location> Create(Location entity)
+    public async Task<Location?> Create(Location entity)
     {
         await context.Locations.AddAsync(entity);
-        await context.SaveChangesAsync();
-        return entity;
+        var result = await context.SaveChangesAsync();
+        if (result > 0) return entity;
+
+        return null;
     }
 
     public async Task<bool> Delete(int id)

@@ -17,7 +17,7 @@ public class RecyclingMachineService : IRecyclingMachineService
         this.mapper = mapper;
     }
 
-    public async Task<RecyclingMachine> Create(CreateRMDTO entity)
+    public async Task<RecyclingMachine?> Create(CreateRMDTO entity)
     {
         return await rMRepository.Create(mapper.Map<RecyclingMachine>(entity));
     }

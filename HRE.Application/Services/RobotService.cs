@@ -16,7 +16,7 @@ public class RobotService:IRobotService
         this.mapper = mapper;
     }
 
-    public async Task<Robot> Create(CreateRobotDTO entity)
+    public async Task<Robot?> Create(CreateRobotDTO entity)
     {
         var result = await robotRepository.Create(mapper.Map<Robot>(entity));
         return result;

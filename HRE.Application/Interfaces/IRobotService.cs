@@ -5,7 +5,7 @@ namespace HRE.Application.Interfaces;
 
 public interface IRobotService
 {
-    Task<Robot> Create(CreateRobotDTO entity);
+    Task<Robot?> Create(CreateRobotDTO entity);
 
     Task<GetRobotDTO> GetByID(int id);
     Task<List<GetRobotDTO>> GetAll();

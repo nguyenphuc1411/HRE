@@ -13,12 +13,13 @@ public class RoleRepository:IRoleRepository
     {
         this.context = context;
     }
-
-    public async Task<Role> Create(Role entity)
+    public async Task<Role?> Create(Role entity)
     {
         await context.Roles.AddAsync(entity);
-        await context.SaveChangesAsync();
-        return entity;
+        var result = await context.SaveChangesAsync();
+        if (result > 0) return entity;
+
+        return null;
     }
 
     public async Task<bool> Delete(int id)
@@ -42,6 +43,23 @@ public class RoleRepository:IRoleRepository
     public async Task<bool> Update(Role entity)
     {
         context.Roles.Update(entity);
+        return await context.SaveChangesAsync() > 0;
+    }
+
+    // SỬ LÝ VỀ ROLE PERMISSION
+    public async Task<RolePermission?> AddPermission(RolePermission entity)
+    {
+        await context.RolePermissions.AddAsync(entity);
+        var result = await context.SaveChangesAsync();
+        if (result > 0) return entity;
+        return null;
+    }
+
+    public async Task<bool> DeletePermission(int roleID, int permissionID)
+    {
+        var entityToDelete = await context.RolePermissions.FirstOrDefaultAsync(x=>x.RoleId==roleID&&x.PermissionId==permissionID);
+        if (entityToDelete == null) return false;
+        context.RolePermissions.Remove(entityToDelete);
         return await context.SaveChangesAsync() > 0;
     }
 }

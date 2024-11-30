@@ -16,7 +16,7 @@ public class AreaService:IAreaService
         this.mapper = mapper;
     }
 
-    public async Task<Area> Create(AreaDTO entity)
+    public async Task<Area?> Create(AreaDTO entity)
     {
         var result = await areaRepository.Create(mapper.Map<Area>(entity));
         return result;

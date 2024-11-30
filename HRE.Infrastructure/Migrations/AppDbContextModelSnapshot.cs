@@ -190,7 +190,7 @@ namespace HRE.Infrastructure.Migrations
                     b.HasIndex("RuleName")
                         .IsUnique();
 
-                    b.ToTable("GetRules");
+                    b.ToTable("GiftRules");
                 });
 
             modelBuilder.Entity("HRE.Domain.Entities.Location", b =>

@@ -6,7 +6,7 @@ namespace HRE.Application.Interfaces;
 
 public interface IGiftService
 {
-    Task<Gift> Create(GiftDTO entity);
+    Task<Gift?> Create(GiftDTO entity);
     Task<bool> Update(int id, GiftDTO entity);
     Task<bool> Delete(int id);
 }

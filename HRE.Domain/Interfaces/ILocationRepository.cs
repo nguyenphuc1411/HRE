@@ -4,7 +4,7 @@ namespace HRE.Domain.Interfaces;
 
 public interface ILocationRepository
 {
-    Task<Location> Create(Location entity);
+    Task<Location?> Create(Location entity);
 
     Task<bool> Update(Location entity);
 

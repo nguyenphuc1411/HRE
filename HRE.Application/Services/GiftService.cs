@@ -18,7 +18,7 @@ public class GiftService : IGiftService
         this.mapper = mapper;
     }
 
-    public async Task<Gift> Create(GiftDTO entity)
+    public async Task<Gift?> Create(GiftDTO entity)
     {
         var result = await giftRepository.Create(mapper.Map<Gift>(entity));
         return result;
