@@ -4,6 +4,7 @@ using HRE.Application.Mappings;
 using HRE.Application.Services;
 using HRE.Infrastructure.Extentions;
 using HRE.Infrastructure.Seeders;
+using HRE.WebAPI.Middelwares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -72,7 +73,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();
@@ -80,6 +80,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 

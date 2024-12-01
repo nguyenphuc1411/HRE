@@ -22,7 +22,7 @@ public static class AuthExtentions
         var tokenDesciption = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(30),
+            Expires = DateTime.UtcNow.AddDays(30),
             SigningCredentials = creds
         };
         var token = jwtSecurityTokenHandler.CreateToken(tokenDesciption);

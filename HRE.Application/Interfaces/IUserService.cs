@@ -15,4 +15,6 @@ public interface IUserService
     Task<GetUserDTO?> GetById(int id);
 
     Task<List<GetUserDTO>> Get();
+
+    Task<List<string>> GetRolePermissions(int userId);
 }

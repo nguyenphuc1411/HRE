@@ -1,6 +1,7 @@
 ﻿using HRE.Application.DTOs.Area;
 using HRE.Application.Interfaces;
 using HRE.Domain.Entities;
+using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +39,7 @@ namespace HRE.WebAPI.Controllers
             return result ? NoContent() : BadRequest();
         }
 
+        [RequiredPermission("Xem danh sách khu vực")]
         [HttpGet]
         public async Task<ActionResult<List<GetAreaDTO>>> Get()
         {

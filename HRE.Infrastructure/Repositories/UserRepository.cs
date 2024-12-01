@@ -62,4 +62,11 @@ public class UserRepository:IUserRepository
     {
         return await context.Users.Include(x=>x.Role).FirstOrDefaultAsync(x=>x.Id==id);
     }
+
+    public async Task<User?> GetPermissions(int id)
+    {
+        return await context.Users
+            .Include(x => x.Role).ThenInclude(x=>x.RolePermissions).ThenInclude(x=>x.Permission)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
 }

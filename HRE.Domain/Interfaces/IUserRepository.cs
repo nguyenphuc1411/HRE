@@ -19,4 +19,6 @@ public interface IUserRepository
 
     Task<List<User>> GetAll();
     Task<User?> GetByIDQuery(int id);
+    Task<User?> GetPermissions(int id);
+
 }

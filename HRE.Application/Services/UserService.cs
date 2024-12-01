@@ -20,8 +20,8 @@ public class UserService : IUserService
     public async Task<User?> Create(UserDTO entity)
     {
         // Kiem tra username va email
-        var check = await userRepository.GetByCondition(x=>x.Email== entity.Email || x.Username==entity.Username);
-        if (check!=null) return null;
+        var check = await userRepository.GetByCondition(x => x.Email == entity.Email || x.Username == entity.Username);
+        if (check != null) return null;
 
         var passwordHasher = new PasswordHasher<User>();
         var user = mapper.Map<User>(entity);
@@ -34,13 +34,13 @@ public class UserService : IUserService
         return await userRepository.Delete(id);
     }
 
-   
+
     public async Task<bool> Update(int id, UserDTO entity)
     {
         var user = await userRepository.GetByID(id);
-        if(user == null) return false;
+        if (user == null) return false;
 
-        mapper.Map(entity,user);
+        mapper.Map(entity, user);
         var passwordHasher = new PasswordHasher<User>();
         user.Password = passwordHasher.HashPassword(user, entity.Password);
         return await userRepository.Update(user);
@@ -51,7 +51,7 @@ public class UserService : IUserService
         var data = await userRepository.GetAll();
         var result = data.Select(x => new GetUserDTO
         {
-            Id= x.Id,
+            Id = x.Id,
             Fullname = x.Fullname,
             Email = x.Email,
             Username = x.Username,
@@ -68,7 +68,7 @@ public class UserService : IUserService
     {
         var data = await userRepository.GetByIDQuery(id);
         if (data == null) return null;
-        var result =new GetUserDTO
+        var result = new GetUserDTO
         {
             Id = data.Id,
             Fullname = data.Fullname,
@@ -82,4 +82,17 @@ public class UserService : IUserService
         return result;
     }
 
+    public async Task<List<string>> GetRolePermissions(int userId)
+    {
+        var result = new List<string>();
+
+        var data = await userRepository.GetPermissions(userId);
+        if (data != null)
+        {
+            result = data.Role.RolePermissions
+          .Select(x => x.Permission.PermissionName)
+          .ToList();
+        }
+        return result;
+    }
 }
