@@ -34,12 +34,20 @@ public class LocationRepository : ILocationRepository
 
     public async Task<List<Location>> GetAll()
     {
-        return await context.Locations.ToListAsync();
+        return await context.Locations
+            .Include(x => x.Campaigns).ThenInclude(c => c.RobotCampaigns)
+            .Include(x => x.Campaigns).ThenInclude(c => c.MachineCampaigns)
+            .Include(x => x.Area) 
+            .ToListAsync();
     }
 
     public async Task<Location?> GetByID(int id)
     {
-        return await context.Locations.FindAsync(id);
+        return await context.Locations
+            .Include(x=>x.Campaigns).ThenInclude(x=>x.RobotCampaigns).ThenInclude(x => x.Robot)
+            .Include(x=>x.Campaigns).ThenInclude(x=>x.MachineCampaigns).ThenInclude(x => x.Machine)
+            .Include(x=>x.Area)
+            .FirstOrDefaultAsync(x=>x.Id==id);
     }
 
     public async Task<bool> Update(Location entity)

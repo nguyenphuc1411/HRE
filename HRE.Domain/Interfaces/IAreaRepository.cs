@@ -10,6 +10,7 @@ public interface IAreaRepository
 
     Task<bool> Delete(int id);
 
+    Task<Area?> GetByIDQuery(int id);
     Task<Area?> GetByID(int id);
 
     Task<List<Area>> GetAll();

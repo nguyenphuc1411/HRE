@@ -37,5 +37,17 @@ namespace HRE.WebAPI.Controllers
             return result ? NoContent() : BadRequest();
         }
 
+        [HttpGet]
+        public async Task<ActionResult<GetLocationsDTO>> Get()
+        {
+            return Ok(await locationService.Get());
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GetLocationDTO>> GetByID([FromRoute] int id)
+        {
+            var result = await locationService.GetByID(id);
+            if(result == null) return NotFound();
+            return Ok(result);
+        }
     }
 }

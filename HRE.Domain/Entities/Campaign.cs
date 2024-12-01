@@ -13,9 +13,9 @@ public class Campaign
     public int LocationId { get; set; }
     public Location Location { get; set; } = default!;
 
-    public ICollection<RobotCampaign>? RobotCampaigns { get; set; }
-    public ICollection<MachineCampaign>? MachineCampaigns { get; set; }
-    public ICollection<UserPoint>? UserPoints { get; set; }
-    public ICollection<SpinHistory>? SpinHistories { get; set; }
-    public ICollection<CampaignGiftRule>? CampaignGiftRules { get; set; }
+    public ICollection<RobotCampaign> RobotCampaigns { get; set; } = default!;
+    public ICollection<MachineCampaign> MachineCampaigns { get; set; } = default!;
+    public ICollection<UserPoint> UserPoints { get; set; } = default!;
+    public ICollection<SpinHistory> SpinHistories { get; set; } = default!;
+    public ICollection<CampaignGiftRule> CampaignGiftRules { get; set; } = default!;
 }

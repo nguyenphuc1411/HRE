@@ -11,4 +11,8 @@ public interface IUserService
     Task<bool> Update(int id,UserDTO entity);
 
     Task<bool> Delete(int id);
+
+    Task<GetUserDTO?> GetById(int id);
+
+    Task<List<GetUserDTO>> Get();
 }

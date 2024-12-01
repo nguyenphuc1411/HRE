@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HRE.Application.DTOs.Area;
+using HRE.Application.DTOs.Campaign;
 using HRE.Application.DTOs.Gift;
 using HRE.Application.DTOs.GiftRule;
 using HRE.Application.DTOs.Location;
@@ -31,7 +32,7 @@ public class MappingProfile:Profile
         CreateMap<LocationDTO,Location>();
 
         // Area
-        CreateMap<AreaDTO, Area>();
+        CreateMap<AreaDTO, Area>();      
 
         // Gift
         CreateMap<GiftDTO,Gift>();
@@ -41,6 +42,8 @@ public class MappingProfile:Profile
 
         // Rule
         CreateMap<GiftRuleDTO,GiftRule>();
+        CreateMap<GiftInRuleDTO, GiftInRule>();
+
 
         // Permission
         CreateMap<PermissionDTO,Permission>();
@@ -48,5 +51,10 @@ public class MappingProfile:Profile
 
         // User 
         CreateMap<UserDTO,User>();
+
+        // Campaign 
+        CreateMap<CampaignDTO,Campaign>();
+
+        CreateMap<CampaignGiftRuleDTO, CampaignGiftRule>();
     }
 }

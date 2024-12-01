@@ -1,4 +1,5 @@
-﻿using HRE.Application.Interfaces;
+﻿using HRE.Application.Extentions;
+using HRE.Application.Interfaces;
 using HRE.Application.Mappings;
 using HRE.Application.Services;
 using HRE.Infrastructure.Extentions;
@@ -25,6 +26,9 @@ builder.Services.AddScoped<IGiftRuleService, GiftRuleService>();
 builder.Services.AddScoped<IGiftService, GiftService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICampaignService, CampaignService>();
+
+builder.Services.AddTransient<SendMailService>();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 

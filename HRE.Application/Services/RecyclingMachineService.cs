@@ -27,9 +27,9 @@ public class RecyclingMachineService : IRecyclingMachineService
         return await rMRepository.Delete(id);
     }
 
-    public async Task<List<RecyclingMachine>> GetAll()
+    public async Task<List<GetRMDTO>> GetAll()
     {
-        return await rMRepository.GetAll();
+        return mapper.Map<List<GetRMDTO>>(await rMRepository.GetAll());
     }
 
     public Task<GetRobotDTO> GetByID(int id)

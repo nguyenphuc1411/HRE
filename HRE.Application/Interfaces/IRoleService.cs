@@ -9,9 +9,11 @@ public interface IRoleService
     Task<bool> Update(int id, RoleDTO entity);
     Task<bool> Delete(int id);
 
+    Task<List<GetRoleDTO>> Get();
+    Task<GetRoleDTO?> GetById(int id);
     // Sử lý Permission
 
-    Task<RolePermission?> AddPermission(int roleID,int permissionID);
+    Task<bool> AddPermission(int roleID,List<int> permissionIDs);
 
-    Task<bool> DeletePermission(int roleID,int permissionID);
+    Task<bool> DeletePermission(int roleID,List<int> permissionIDs);
 }

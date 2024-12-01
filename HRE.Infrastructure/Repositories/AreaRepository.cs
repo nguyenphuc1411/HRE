@@ -34,9 +34,12 @@ public class AreaRepository:IAreaRepository
 
     public async Task<List<Area>> GetAll()
     {
-        return await context.Areas.ToListAsync();
+        return await context.Areas.Include(x=>x.Locations).ToListAsync();
     }
-
+    public async Task<Area?> GetByIDQuery(int id)
+    {
+        return await context.Areas.Include(x => x.Locations).FirstOrDefaultAsync(x=>x.Id==id);
+    }
     public async Task<Area?> GetByID(int id)
     {
         return await context.Areas.FindAsync(id);

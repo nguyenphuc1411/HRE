@@ -17,16 +17,4 @@ public class GiftRuleDTO
 
     [MaxLength(255, ErrorMessage = "Mô tả không được dài quá 255 ký tự.")]
     public string Description { get; set; } = default!;
-
-    public List<GiftInRuleDTO> GiftInRuleDTOs { get; set; } = new List<GiftInRuleDTO>();
 }
-
-public class GiftInRuleDTO
-{
-    [Required(ErrorMessage = "Mã quà tặng là bắt buộc.")]
-    public int GiftId { get; set; }
-
-    [Range(0, 100, ErrorMessage = "Xác suất phải nằm trong khoảng từ 0 đến 100.")]
-    public int Probability { get; set; } = 0;
-}
-

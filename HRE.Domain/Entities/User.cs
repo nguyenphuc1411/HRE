@@ -15,7 +15,7 @@ public class User
     [Column(TypeName = "NVarchar(max)")]
     public string Password { get; set; } = default!;
     public bool Status { get; set; } = false;
-    public DateTime DateAdded { get; set; }
+    public DateTime DateAdded { get; set; } = DateTime.Now;
 
     public int RoleId {  get; set; }
     public Role Role { get; set; } = default!;

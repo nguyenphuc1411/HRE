@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.Permission;
 using HRE.Application.Interfaces;
+using HRE.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,7 +40,18 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-
+        [HttpGet]
+        public async Task<ActionResult<List<Permission>>> Get()
+        {
+            return Ok(await permissionService.GetAll());
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Permission>> GetByID([FromRoute]int id)
+        {
+            var result = await permissionService.GetByID(id);
+            if(result == null) return NotFound();
+            return Ok(result);
+        }
 
 
         // Group
@@ -68,6 +80,18 @@ namespace HRE.WebAPI.Controllers
             return result ? NoContent() : BadRequest();
         }
 
+        [HttpGet("/api/groups")]
+        public async Task<ActionResult<List<PermissionGroup>>> GetGroup()
+        {
+            return Ok(await permissionService.GetAllGroup());
+        }
+        [HttpGet("/api/groups/{id}")]
+        public async Task<ActionResult<Permission>> GetGroupByID([FromRoute] int id)
+        {
+            var result = await permissionService.GetGroupByID(id);
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
 
     }
 }

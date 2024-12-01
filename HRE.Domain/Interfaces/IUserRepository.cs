@@ -16,4 +16,7 @@ public interface IUserRepository
     Task<User?> GetByCondition(Expression<Func<User, bool>> predicate);
 
     Task<List<User>> GetsByCondition(Expression<Func<User, bool>> predicate);
+
+    Task<List<User>> GetAll();
+    Task<User?> GetByIDQuery(int id);
 }

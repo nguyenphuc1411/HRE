@@ -35,7 +35,17 @@ public class PermissionService : IPermissionService
         mapper.Map(entity, entityToUpdate);
         return await permissionRepository.Update(entityToUpdate);
     }
+    public async Task<Permission?> GetByID(int id)
+    {
+        return await permissionRepository.GetByID(id);
+    }
 
+    public async Task<List<Permission>> GetAll()
+    {
+        return await permissionRepository.GetAll();
+    }
+
+    // GROUP
 
     public async Task<PermissionGroup?> CreateGroup(GroupDTO entity)
     {
@@ -53,5 +63,15 @@ public class PermissionService : IPermissionService
     public async Task<bool> DeleteGroup(int id)
     {
         return await permissionRepository.DeleteGroup(id);
+    }
+
+    public async Task<PermissionGroup?> GetGroupByID(int id)
+    {
+        return await permissionRepository.GetGroupByID(id);
+    }
+
+    public async Task<List<PermissionGroup>> GetAllGroup()
+    {
+        return await permissionRepository.GetAllGroup();
     }
 }

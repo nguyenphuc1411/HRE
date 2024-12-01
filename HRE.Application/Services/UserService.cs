@@ -34,6 +34,7 @@ public class UserService : IUserService
         return await userRepository.Delete(id);
     }
 
+   
     public async Task<bool> Update(int id, UserDTO entity)
     {
         var user = await userRepository.GetByID(id);
@@ -44,4 +45,41 @@ public class UserService : IUserService
         user.Password = passwordHasher.HashPassword(user, entity.Password);
         return await userRepository.Update(user);
     }
+
+    public async Task<List<GetUserDTO>> Get()
+    {
+        var data = await userRepository.GetAll();
+        var result = data.Select(x => new GetUserDTO
+        {
+            Id= x.Id,
+            Fullname = x.Fullname,
+            Email = x.Email,
+            Username = x.Username,
+            Status = x.Status,
+            DateAdded = x.DateAdded,
+            RoleId = x.RoleId,
+            RoleName = x.Role.RoleName
+        }).ToList();
+
+        return result;
+    }
+
+    public async Task<GetUserDTO?> GetById(int id)
+    {
+        var data = await userRepository.GetByIDQuery(id);
+        if (data == null) return null;
+        var result =new GetUserDTO
+        {
+            Id = data.Id,
+            Fullname = data.Fullname,
+            Email = data.Email,
+            Username = data.Username,
+            Status = data.Status,
+            DateAdded = data.DateAdded,
+            RoleId = data.RoleId,
+            RoleName = data.Role.RoleName
+        };
+        return result;
+    }
+
 }

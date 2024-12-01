@@ -2,7 +2,6 @@
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
 using HRE.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -46,11 +45,21 @@ public class UserRepository:IUserRepository
 
     public async Task<User?> GetByCondition(Expression<Func<User, bool>> predicate)
     {
-        return await context.Users.Where(predicate).FirstOrDefaultAsync();
+        return await context.Users.FirstOrDefaultAsync(predicate);
     }
 
     public async Task<List<User>> GetsByCondition(Expression<Func<User, bool>> predicate)
     {
         return await context.Users.Where(predicate).ToListAsync();
+    }
+
+    public async Task<List<User>> GetAll()
+    {
+        return await context.Users.Include(x => x.Role).ToListAsync();
+    }
+
+    public async Task<User?> GetByIDQuery(int id)
+    {
+        return await context.Users.Include(x=>x.Role).FirstOrDefaultAsync(x=>x.Id==id);
     }
 }

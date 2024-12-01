@@ -1,5 +1,7 @@
 ﻿using HRE.Application.DTOs.Auth;
+using HRE.Application.DTOs.User;
 using HRE.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,6 +35,35 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
+        [HttpPost("confirm-registion")]
+        public async Task<ActionResult> ConfrimRegistion([FromBody] ConfirmRegistion confirmRegistion)
+        {
+            string token = await authService.ConfirmRegistion(confirmRegistion);
+            if (string.IsNullOrEmpty(token)) return BadRequest();
 
+            return Ok(token);
+        }
+
+        [HttpPost("request-forgot-password")]
+        public async Task<ActionResult> RequestForgotPassword([FromBody] ForgotPasswordDTO forgotPasswordDTO)
+        {
+            bool result = await authService.RequestForgotPassword(forgotPasswordDTO);
+            
+            return result ? Ok() : BadRequest();
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordDTO resetPasswordDTO)
+        {
+            bool result = await authService.ResetPassword(resetPasswordDTO);
+
+            return result ? Ok() : BadRequest();
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<GetUserDTO>> Get()
+        {
+            return await authService.Get();
+        }
     }
 }

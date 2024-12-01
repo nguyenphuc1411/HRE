@@ -13,9 +13,17 @@ public interface IRoleRepository
 
     Task<Role?> GetByID(int id);
 
+    Task<Role?> GetByIDQuery(int id);
+
     Task<List<Role>> GetAll();
 
     Task<RolePermission?> AddPermission(RolePermission entity);
 
     Task<bool> DeletePermission(int roleID,int permissionID);
+
+    Task BeginTransaction();
+
+    Task CommitTransaction();
+
+    Task RollbackTransaction();
 }

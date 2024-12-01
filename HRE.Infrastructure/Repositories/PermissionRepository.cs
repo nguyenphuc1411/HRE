@@ -33,7 +33,7 @@ public class PermissionRepository : IPermissionRepository
     {
         return await context.Permissions.ToListAsync();
     }
-
+  
     public async Task<Permission?> GetByID(int id)
     {
         return await context.Permissions.FindAsync(id);
@@ -67,5 +67,9 @@ public class PermissionRepository : IPermissionRepository
     public async Task<PermissionGroup?> GetGroupByID(int id)
     {
         return await context.PermissionGroups.FindAsync(id);
+    }
+    public async Task<List<PermissionGroup>> GetAllGroup()
+    {
+        return await context.PermissionGroups.ToListAsync();
     }
 }

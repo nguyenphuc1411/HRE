@@ -7,7 +7,7 @@ public interface IRecyclingMachineService
 {
     Task<RecyclingMachine?> Create(CreateRMDTO entity);
     //Task<GetRobotDTO> GetByID(int id);
-    Task<List<RecyclingMachine>> GetAll();
+    Task<List<GetRMDTO>> GetAll();
 
     Task<bool> Update(UpdateRMDTO entity);
     Task<bool> Delete(int id);

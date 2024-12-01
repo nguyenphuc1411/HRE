@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.Role;
 using HRE.Application.Interfaces;
+using HRE.Application.Services;
 using HRE.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,19 +38,33 @@ namespace HRE.WebAPI.Controllers
             return result ? NoContent() : BadRequest();
         }
 
-
-        // THÊM QUYỀN CHO ROLE VÀ XÓA QUYỀN
-        [HttpPost("{roleID}/perimssions/{permissionID}")]
-        public async Task<IActionResult> AddPermissionForRole([FromRoute] int roleID, [FromRoute] int permissionID)
+        [HttpGet]
+        public async Task<ActionResult<List<GetRoleDTO>>> Get()
         {
-            var result = await roleService.AddPermission(roleID,permissionID);
-            if(result==null) return BadRequest();
+            var result = await roleService.Get();
             return Ok(result);
         }
-        [HttpDelete("{roleID}/perimssions/{permissionID}")]
-        public async Task<IActionResult> DeletePermissionForRole([FromRoute] int roleID, [FromRoute] int permissionID)
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GetRoleDTO>> GetByID([FromRoute] int id)
         {
-            var result = await roleService.DeletePermission(roleID, permissionID);
+            var result = await roleService.GetById(id);
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+
+
+        // THÊM QUYỀN CHO ROLE VÀ XÓA QUYỀN
+        [HttpPost("{roleID}/perimssions")]
+        public async Task<IActionResult> AddPermissionForRole([FromRoute] int roleID, [FromBody] List<int> permissionIDs)
+        {
+            bool result = await roleService.AddPermission(roleID, permissionIDs);
+            return result?  Ok(): BadRequest();
+        }
+        [HttpDelete("{roleID}/perimssions")]
+        public async Task<IActionResult> DeletePermissionForRole([FromRoute] int roleID, [FromBody] List<int> permissionIDs)
+        {
+            var result = await roleService.DeletePermission(roleID, permissionIDs);
             return result ? NoContent(): BadRequest();
         }
     }

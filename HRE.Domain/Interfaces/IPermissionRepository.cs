@@ -21,4 +21,7 @@ public interface IPermissionRepository
     Task<bool> DeleteGroup(int id);
 
     Task<PermissionGroup?> GetGroupByID(int id);
+
+    Task<List<PermissionGroup>> GetAllGroup();
+
 }

@@ -11,9 +11,17 @@ public interface IPermissionService
 
     Task<bool> Delete(int id);
 
+    Task<Permission?> GetByID(int id);
+
+    Task<List<Permission>> GetAll();
+
     Task<PermissionGroup?> CreateGroup(GroupDTO entity);
 
     Task<bool> UpdateGroup(int id, GroupDTO entity);
 
     Task<bool> DeleteGroup(int id);
+
+    Task<PermissionGroup?> GetGroupByID(int id);
+
+    Task<List<PermissionGroup>> GetAllGroup();
 }

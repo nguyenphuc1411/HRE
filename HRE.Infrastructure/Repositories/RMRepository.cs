@@ -34,7 +34,7 @@ public class RMRepository : IRMRepository
 
     public async Task<List<RecyclingMachine>> GetAll()
     {
-        return await context.RecyclingMachines.ToListAsync();
+        return await context.RecyclingMachines.Include(x=>x.Location).ToListAsync();
     }
 
     public async Task<RecyclingMachine?> GetByID(int id)
