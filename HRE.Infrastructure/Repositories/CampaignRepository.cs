@@ -141,4 +141,11 @@ public class CampaignRepository:ICampaignRepository
     {
         return await context.CampaignGiftRules.FindAsync(id);
     }
+
+    // VAN HANH CHIEN DICH
+    public async Task<List<GiftRule>> GetRuleForCampaign()
+    {
+        return await context.GiftRules
+            .Include(x=>x.GiftInRules).ThenInclude(x=>x.CampaignGiftRules).ToListAsync();
+    }
 }

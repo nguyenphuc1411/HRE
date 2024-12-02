@@ -11,10 +11,14 @@ public class CampaignService : ICampaignService
 {
     private readonly ICampaignRepository campaignRepository;
     private readonly IMapper mapper;
-    public CampaignService(ICampaignRepository campaignRepository, IMapper mapper)
+    private readonly IAuthService authService;
+    private readonly IUserPointRepository userPointRepository;
+    public CampaignService(ICampaignRepository campaignRepository, IMapper mapper, IAuthService authService, IUserPointRepository userPointRepository)
     {
         this.campaignRepository = campaignRepository;
         this.mapper = mapper;
+        this.authService = authService;
+        this.userPointRepository = userPointRepository;
     }
 
     public async Task<Campaign?> Create(CampaignDTO entity)
@@ -162,5 +166,42 @@ public class CampaignService : ICampaignService
     {
         return await campaignRepository.RemoveGiftFromCampaign(id);
     }
+
+    // VẬN HÀNH CHIẾN DỊCH
+
+    public async Task<Reward?> Spin(int id)
+    {
+        int userID = authService.GetUserID();
+
+        var userPoint = await userPointRepository.GetByCondition(x=>x.UserId== userID&&x.CampaignId==id);
+        if(userPoint==null) return null;
+
+        var rules = await campaignRepository.GetRuleForCampaign();
+
+        var applyRule = rules.Where(x=>x.MinPoints>=userPoint.Points&& x.MaxPoints<=userPoint.Points).FirstOrDefault();
+        if(applyRule==null) return null;
+
+        // Danh sách phần quà và tỷ lệ
+        var gifts = applyRule.GiftInRules.Select(x => new { x.GiftId, x.Probability }).ToList();
+
+        // Tính tổng xác suất
+        double totalProbability = gifts.Sum(x => x.Probability);
+        // Sinh số ngẫu nhiên trong khoảng [0, totalProbability]
+        double randomValue = new Random().NextDouble() * totalProbability;
+        double cumulative = 0;
+
+   /*     // Tìm phần quà trúng thưởng
+        foreach (var gift in gifts)
+        {
+            cumulative += gift.Probability;
+            if (randomValue <= cumulative)
+            {
+                return await rewardRepository.GetRewardById(gift.GiftId);
+            }
+        }*/
+
+        return null; // Kh
+    }
+}
 
 }

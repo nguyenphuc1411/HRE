@@ -34,4 +34,7 @@ public interface ICampaignRepository
     Task<bool> RemoveGiftFromCampaign(int id);
 
     Task<CampaignGiftRule?> GetGiftByID(int id);
+
+    // Van hanh chien dich
+    Task<List<GiftRule>> GetRuleForCampaign(); 
 }

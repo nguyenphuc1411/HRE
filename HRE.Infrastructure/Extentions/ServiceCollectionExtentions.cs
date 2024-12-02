@@ -28,5 +28,6 @@ public static class ServiceCollectionExtentions
         services.AddScoped<IGiftRuleRepository, GiftRuleRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserTokenRepository, UserTokenRepository>();
+        services.AddScoped<IUserPointRepository, UserPointRepository>();
     }
 }

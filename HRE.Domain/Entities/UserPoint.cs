@@ -12,5 +12,5 @@ public class UserPoint
 
     public int Points { get; set; }
 
-    public DateTime LastUpdated { get; set; }
+    public DateTime LastUpdated { get; set; }= DateTime.Now;
 }

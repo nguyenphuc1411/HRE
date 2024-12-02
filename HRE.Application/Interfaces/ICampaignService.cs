@@ -24,4 +24,8 @@ public interface ICampaignService
     Task<bool> UpdateGiftInCampaign(int id,CampaignGiftRuleDTO entity);
 
     Task<bool> RemoveGiftInCampaign(int id);
+
+    // VẬN HÀNH CHIẾN DỊCH
+
+    Task<Reward?> Spin(int id);
 }

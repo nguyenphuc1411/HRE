@@ -28,6 +28,7 @@ builder.Services.AddScoped<IGiftService, GiftService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICampaignService, CampaignService>();
+builder.Services.AddScoped<IUserPointService, UserPointService>();
 
 builder.Services.AddTransient<SendMailService>();
 

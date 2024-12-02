@@ -117,6 +117,4 @@ public class RoleService:IRoleService
             throw new Exception(ex.Message);
         }
     }
-
-    
 }

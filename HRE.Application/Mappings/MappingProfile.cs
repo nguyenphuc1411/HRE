@@ -9,6 +9,7 @@ using HRE.Application.DTOs.RecyclingMachine;
 using HRE.Application.DTOs.Robot;
 using HRE.Application.DTOs.Role;
 using HRE.Application.DTOs.User;
+using HRE.Application.DTOs.UserPoint;
 using HRE.Domain.Entities;
 
 namespace HRE.Application.Mappings;
@@ -56,5 +57,8 @@ public class MappingProfile:Profile
         CreateMap<CampaignDTO,Campaign>();
 
         CreateMap<CampaignGiftRuleDTO, CampaignGiftRule>();
+
+        // User Point
+        CreateMap<UserPointDTO, UserPoint>();
     }
 }
