@@ -15,19 +15,7 @@ public static class ServiceCollectionExtentions
         var connectionString = configuration.GetConnectionString("MyDB");
         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
+        services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         services.AddScoped<IDataSeeder, DataSeeder>();
-
-        services.AddScoped<IRobotRepository, RobotRepository>();
-        services.AddScoped<IRMRepository, RMRepository>();
-        services.AddScoped<IAreaRepository, AreaRepository>();
-        services.AddScoped<ILocationRepository, LocationRepository>();
-        services.AddScoped<IGiftRepository, GiftRepository>();
-        services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<IPermissionRepository, PermissionRepository>();
-        services.AddScoped<ICampaignRepository, CampaignRepository>();
-        services.AddScoped<IGiftRuleRepository, GiftRuleRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IUserTokenRepository, UserTokenRepository>();
-        services.AddScoped<IUserPointRepository, UserPointRepository>();
     }
 }

@@ -3,117 +3,138 @@ using HRE.Application.DTOs.Role;
 using HRE.Application.Interfaces;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace HRE.Application.Services;
 
 public class RoleService:IRoleService
 {
-    private readonly IRoleRepository roleRepository;
+    private readonly IBaseRepository<Role> roleRepository;
+    private readonly IBaseRepository<RolePermission> rolePermissionRepository;
     private readonly IMapper mapper;
-    public RoleService(IRoleRepository roleRepository, IMapper mapper)
+    public RoleService(IBaseRepository<Role> roleRepository, IMapper mapper, 
+        IBaseRepository<RolePermission> rolePermissionRepository)
     {
         this.roleRepository = roleRepository;
         this.mapper = mapper;
+        this.rolePermissionRepository = rolePermissionRepository;
     }
 
     public async Task<Role?> Create(RoleDTO entity)
     {
-        var result = await roleRepository.Create(mapper.Map<Role>(entity));
-        return result;
+        var role = mapper.Map<Role>(entity);
+        await roleRepository.AddAsync(role);
+        var result = await roleRepository.SaveChangesAsync();
+        return result>0? role: null;
     }
 
     public async Task<bool> Delete(int id)
     {
-        return await roleRepository.Delete(id);
+        var entityToDelete = await roleRepository.GetByIdAsync(id);
+        if (entityToDelete == null) return false;
+        roleRepository.Delete(entityToDelete);
+        return await roleRepository.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> Update(int id, RoleDTO entity)
     {
-        var entityToUpdate = await roleRepository.GetByID(id);
+        var entityToUpdate = await roleRepository.GetByIdAsync(id);
         if (entityToUpdate == null) return false;
+
         mapper.Map(entity, entityToUpdate);
-        return await roleRepository.Update(entityToUpdate);
+        roleRepository.Update(entityToUpdate);
+
+        return await roleRepository.SaveChangesAsync() > 0;
     }
 
-    public async Task<List<GetRoleDTO>> Get()
+    public async Task<IEnumerable<GetRoleDTO>> Get()
     {
-       var data = await roleRepository.GetAll();
-        var result = data.Select(x => new GetRoleDTO
+        return await roleRepository.AsQueryable().Select(x => new GetRoleDTO
         {
             Id = x.Id,
             RoleName=x.RoleName,
             Description =x.Description,
             TotalAccount = x.Users.Count()
-        }).ToList();
-        return result;
+        }).ToListAsync();
     }
 
     public async Task<GetRoleDTO?> GetById(int id)
     {
-        var data = await roleRepository.GetByIDQuery(id);
-        if (data == null) return null;
-        var result = new GetRoleDTO
+        return await roleRepository.AsQueryable().Select(role=>new GetRoleDTO
         {
-            Id = data.Id,
-            RoleName = data.RoleName,
-            Description = data.Description,
-            TotalAccount = data.Users.Count()
-        };
-        return result;
+            Id = role.Id,
+            RoleName = role.RoleName,
+            Description = role.Description,
+            TotalAccount = role.Users.Count()
+        }).FirstOrDefaultAsync(x=>x.Id== id);     
     }
 
-
     // SỬ Lý Permission
-
     public async Task<bool> AddPermission(int roleID, List<int> permissionIDs)
     {
-        await roleRepository.BeginTransaction();
+        await rolePermissionRepository.BeginTransactionAsync();
         try
         {
+            var listRolePermissions = new List<RolePermission>();
             foreach (var item in permissionIDs)
             {
-                var newEntity = new RolePermission()
+                listRolePermissions.Add(new RolePermission
                 {
                     RoleId = roleID,
                     PermissionId = item
-                };
-                var result = await roleRepository.AddPermission(newEntity);
-                if (result == null)
-                {
-                    await roleRepository.RollbackTransaction();
-                    return false;
-                }
+                });
             }
-            await roleRepository.CommitTransaction();
-            return true;
+            await rolePermissionRepository.AddRangeAsync(listRolePermissions);
+            var result = await rolePermissionRepository.SaveChangesAsync();
+            if (result == listRolePermissions.Count())
+            {
+                // Luu thanh cong
+                await rolePermissionRepository.CommitTransactionAsync();
+                return true;
+            }
+            else
+            {
+                await rolePermissionRepository.RollbackTransactionAsync();
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            await roleRepository.RollbackTransaction();
+            await rolePermissionRepository.RollbackTransactionAsync();
             throw new Exception(ex.Message);
         }       
     }
 
     public async Task<bool> DeletePermission(int roleID, List<int> permissionIDs)
     {
-        await roleRepository.BeginTransaction();
+        await rolePermissionRepository.BeginTransactionAsync();
         try
         {
+            var listRolePermissions = new List <RolePermission>();
             foreach (var item in permissionIDs)
             {
-                bool result = await roleRepository.DeletePermission(roleID, item);
-                if (!result)
+                listRolePermissions.Add(new RolePermission
                 {
-                    await roleRepository.RollbackTransaction();
-                    return false;
-                }
+                    RoleId = roleID,
+                    PermissionId = item
+                });
             }
-            await roleRepository.CommitTransaction();
-            return true;
+            rolePermissionRepository.DeleteRange(listRolePermissions);
+            var result = await rolePermissionRepository.SaveChangesAsync();
+            if (result==listRolePermissions.Count())
+            {
+                await rolePermissionRepository.CommitTransactionAsync();
+                return true;
+            }
+            else
+            {
+                await rolePermissionRepository.RollbackTransactionAsync();
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            await roleRepository.RollbackTransaction();
+            await rolePermissionRepository.RollbackTransactionAsync();
             throw new Exception(ex.Message);
         }
     }

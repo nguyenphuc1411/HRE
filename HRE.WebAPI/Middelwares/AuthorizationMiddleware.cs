@@ -41,7 +41,10 @@ namespace HRE.WebAPI.Middelwares
                     await context.Response.WriteAsync("You do not have permission to access this resource.");
                 }
             }
-            await _next(context);
+            else
+            {
+                await _next(context);
+            }
         }
 
     }

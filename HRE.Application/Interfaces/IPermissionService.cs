@@ -13,7 +13,7 @@ public interface IPermissionService
 
     Task<Permission?> GetByID(int id);
 
-    Task<List<Permission>> GetAll();
+    Task<IEnumerable<Permission>> GetAll();
 
     Task<PermissionGroup?> CreateGroup(GroupDTO entity);
 
@@ -23,5 +23,5 @@ public interface IPermissionService
 
     Task<PermissionGroup?> GetGroupByID(int id);
 
-    Task<List<PermissionGroup>> GetAllGroup();
+    Task<IEnumerable<PermissionGroup>> GetAllGroup();
 }

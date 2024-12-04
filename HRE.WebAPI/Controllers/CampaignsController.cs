@@ -1,6 +1,7 @@
 ﻿using HRE.Application.DTOs.Campaign;
 using HRE.Application.Interfaces;
 using HRE.Domain.Entities;
+using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace HRE.WebAPI.Controllers
             this.campaignService = campaignService;
         }
 
+        [RequiredPermission("")]
         [HttpPost]
         public async Task<ActionResult<Campaign>> Create([FromBody] CampaignDTO entity)
         {
@@ -25,12 +27,14 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
+        [RequiredPermission("")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] CampaignDTO entity)
         {
             bool result = await campaignService.Update(id, entity);
             return result ? NoContent() : BadRequest();
         }
+        [RequiredPermission("")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
@@ -38,7 +42,7 @@ namespace HRE.WebAPI.Controllers
             return result ? NoContent() : BadRequest();
         }
 
-
+        [RequiredPermission("")]
         // ROBOT
         [HttpPost("{id}/robots")]
         public async Task<ActionResult> AddRobotsToCampaign([FromRoute]int id, [FromBody] List<int> robotIDs)
@@ -52,6 +56,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? Ok() : BadRequest();
         }
+        [RequiredPermission("")]
         [HttpDelete("{id}/robots")]
         public async Task<ActionResult> RemoveRobotsFromCampaign([FromRoute] int id, [FromBody] List<int> robotIDs)
         {
@@ -64,7 +69,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-
+        [RequiredPermission("")]
         // MACHINE
         [HttpPost("{id}/recycling-machines")]
         public async Task<ActionResult> AddRMsToCampaign([FromRoute] int id, [FromBody] List<int> machineIDs)
@@ -78,6 +83,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? Ok() : BadRequest();
         }
+        [RequiredPermission("")]
         [HttpDelete("{id}/recycling-machines")]
         public async Task<ActionResult> RemoveMsFromCampaign([FromRoute] int id, [FromBody] List<int> machineIDs)
         {
@@ -92,7 +98,7 @@ namespace HRE.WebAPI.Controllers
         }
 
         // GIFT
-
+        [RequiredPermission("")]
         [HttpPost("{campaignID}/gifts")]
         public async Task<ActionResult> AddGiftToCampaign([FromRoute] int campaignID, [FromBody] CampaignGiftRuleDTO campaignGiftRuleDTO)
         {        
@@ -100,6 +106,7 @@ namespace HRE.WebAPI.Controllers
             if (result == null) return BadRequest();
             return Ok(result);
         }
+        [RequiredPermission("")]
         [HttpPut("gifts/{id}")]
         public async Task<ActionResult> AddGiftFromCampaign([FromRoute] int id, [FromBody] CampaignGiftRuleDTO campaignGiftRuleDTO)
         {         
@@ -107,6 +114,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
+        [RequiredPermission("")]
         [HttpDelete("gifts/{id}")]
         public async Task<ActionResult> RemoveGiftFromCampaign([FromRoute] int id)
         {

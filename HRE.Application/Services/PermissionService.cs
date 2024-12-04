@@ -5,73 +5,92 @@ using HRE.Application.DTOs.Permission;
 using HRE.Application.Interfaces;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
+using System.Security;
 
 namespace HRE.Application.Services;
 
 public class PermissionService : IPermissionService
 {
-    private readonly IPermissionRepository permissionRepository;
+    private readonly IBaseRepository<Permission> permissionRepository;
+    private readonly IBaseRepository<PermissionGroup> permissionGroupRepository;
     private readonly IMapper mapper;
-    public PermissionService(IPermissionRepository permissionRepository, IMapper mapper)
+    public PermissionService(IBaseRepository<Permission> permissionRepository, IMapper mapper, IBaseRepository<PermissionGroup> permissionGroupRepository)
     {
         this.permissionRepository = permissionRepository;
         this.mapper = mapper;
+        this.permissionGroupRepository = permissionGroupRepository;
     }
 
     public async Task<Permission?> Create(PermissionDTO entity)
     {
-        return await permissionRepository.Create(mapper.Map<Permission>(entity));
+        var permission = mapper.Map<Permission>(entity);
+        await permissionRepository.AddAsync(permission);
+        var result = await permissionRepository.SaveChangesAsync();
+        return result>0? permission:null;
     }
 
     public async Task<bool> Delete(int id)
     {
-        return await permissionRepository.Delete(id);
+        var entityToDelete = await permissionRepository.GetByIdAsync(id);
+        if (entityToDelete == null) return false;
+        permissionRepository.Delete(entityToDelete);
+        return await permissionRepository.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> Update(int id, PermissionDTO entity)
     {
-        var entityToUpdate = await permissionRepository.GetByID(id);
+        var entityToUpdate = await permissionRepository.GetByIdAsync(id);
         if (entityToUpdate == null) return false;
+
         mapper.Map(entity, entityToUpdate);
-        return await permissionRepository.Update(entityToUpdate);
+        permissionRepository.Update(entityToUpdate);
+
+        return await permissionRepository.SaveChangesAsync() > 0;
     }
     public async Task<Permission?> GetByID(int id)
     {
-        return await permissionRepository.GetByID(id);
+        return await permissionRepository.GetByIdAsync(id);
     }
 
-    public async Task<List<Permission>> GetAll()
+    public async Task<IEnumerable<Permission>> GetAll()
     {
-        return await permissionRepository.GetAll();
+        return await permissionRepository.GetAllAsync();
     }
 
     // GROUP
 
     public async Task<PermissionGroup?> CreateGroup(GroupDTO entity)
     {
-        return await permissionRepository.CreateGroup(mapper.Map<PermissionGroup>(entity));
+        var group = mapper.Map<PermissionGroup>(entity);
+        await permissionGroupRepository.AddAsync(group);
+        var result = await permissionGroupRepository.SaveChangesAsync();
+        return result > 0 ? group : null;
     }
 
     public async Task<bool> UpdateGroup(int id, GroupDTO entity)
     {
-        var entityToUpdate = await permissionRepository.GetGroupByID(id);
+        var entityToUpdate = await permissionGroupRepository.GetByIdAsync(id);
         if (entityToUpdate == null) return false;
         mapper.Map(entity, entityToUpdate);
-        return await permissionRepository.UpdateGroup(entityToUpdate);
+        permissionGroupRepository.Update(entityToUpdate);
+        return await permissionRepository.SaveChangesAsync()>0;
     }
 
     public async Task<bool> DeleteGroup(int id)
     {
-        return await permissionRepository.DeleteGroup(id);
+        var entityToDelete = await permissionGroupRepository.GetByIdAsync(id);
+        if (entityToDelete == null) return false;
+        permissionGroupRepository.Delete(entityToDelete);
+        return await permissionGroupRepository.SaveChangesAsync() > 0;
     }
 
     public async Task<PermissionGroup?> GetGroupByID(int id)
     {
-        return await permissionRepository.GetGroupByID(id);
+        return await permissionGroupRepository.GetByIdAsync(id);
     }
 
-    public async Task<List<PermissionGroup>> GetAllGroup()
+    public async Task<IEnumerable<PermissionGroup>> GetAllGroup()
     {
-        return await permissionRepository.GetAllGroup();
+        return await permissionGroupRepository.GetAllAsync();
     }
 }

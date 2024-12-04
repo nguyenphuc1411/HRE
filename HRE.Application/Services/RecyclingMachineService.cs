@@ -9,9 +9,9 @@ namespace HRE.Application.Services;
 
 public class RecyclingMachineService : IRecyclingMachineService
 {
-    private readonly IRMRepository rMRepository;
+    private readonly IBaseRepository<RecyclingMachine> rMRepository;
     private readonly IMapper mapper;
-    public RecyclingMachineService(IRMRepository rMRepository, IMapper mapper)
+    public RecyclingMachineService(IBaseRepository<RecyclingMachine> rMRepository, IMapper mapper)
     {
         this.rMRepository = rMRepository;
         this.mapper = mapper;
@@ -19,17 +19,24 @@ public class RecyclingMachineService : IRecyclingMachineService
 
     public async Task<RecyclingMachine?> Create(CreateRMDTO entity)
     {
-        return await rMRepository.Create(mapper.Map<RecyclingMachine>(entity));
+        var rm = mapper.Map<RecyclingMachine>(entity);
+        await rMRepository.AddAsync(rm);
+        var result = await rMRepository.SaveChangesAsync();
+        return result > 0 ? rm : null;
     }
 
     public async Task<bool> Delete(int id)
     {
-        return await rMRepository.Delete(id);
+        var entityToDelete = await rMRepository.GetByIdAsync(id);
+        if (entityToDelete == null) return false;
+        rMRepository.Delete(entityToDelete);
+        return await rMRepository.SaveChangesAsync() > 0;
     }
 
     public async Task<List<GetRMDTO>> GetAll()
     {
-        return mapper.Map<List<GetRMDTO>>(await rMRepository.GetAll());
+        var data = await rMRepository.GetAllAsync();
+        return mapper.Map<List<GetRMDTO>>(data);
     }
 
     public Task<GetRobotDTO> GetByID(int id)
@@ -39,6 +46,12 @@ public class RecyclingMachineService : IRecyclingMachineService
 
     public async Task<bool> Update(UpdateRMDTO entity)
     {
-        return await rMRepository.Update(mapper.Map<RecyclingMachine>(entity));
+        var entityToUpdate = await rMRepository.GetByIdAsync(entity.Id);
+        if (entityToUpdate == null) return false;
+
+        mapper.Map(entity, entityToUpdate);
+        rMRepository.Update(entityToUpdate);
+
+        return await rMRepository.SaveChangesAsync() > 0;
     }
 }

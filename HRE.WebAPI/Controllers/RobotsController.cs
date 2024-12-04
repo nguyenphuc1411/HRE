@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.Robot;
 using HRE.Application.Interfaces;
+using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,14 +16,14 @@ namespace HRE.WebAPI.Controllers
         {
             this.robotService = robotService;
         }
-
+        [RequiredPermission("Xem danh sách Robot")]
         [HttpGet]
-        public async Task<ActionResult<List<GetRobotDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<GetRobotDTO>>> Get()
         {
             var result = await robotService.GetAll();
             return Ok(result);
         }
-
+        [RequiredPermission("Xem chi tiết thông tin Robot")]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<GetRobotDTO>> GetByID([FromRoute] int id)
         {
@@ -30,7 +31,7 @@ namespace HRE.WebAPI.Controllers
             if(result == null) return NotFound();
             return Ok(result);
         }
-
+        [RequiredPermission("Tạo Robot mới")]
         [HttpPost]
         public async Task<ActionResult> Create([FromBody]CreateRobotDTO robot)
         {
@@ -38,7 +39,7 @@ namespace HRE.WebAPI.Controllers
             if(result == null) return BadRequest();
             return CreatedAtAction(nameof(GetByID), new {id=result.Id},result);
         }
-
+        [RequiredPermission("Cập nhật thông tin Robot")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Update([FromRoute]int id,[FromBody] UpdateRobotDTO robot)
         {
@@ -46,7 +47,7 @@ namespace HRE.WebAPI.Controllers
             bool result = await robotService.Update(robot);
             return result? NoContent(): BadRequest();
         }
-
+        [RequiredPermission("Xóa Robot")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete([FromRoute] int id)
         {

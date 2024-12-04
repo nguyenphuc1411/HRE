@@ -8,9 +8,10 @@ namespace HRE.Application.Services;
 
 public class RobotService:IRobotService
 {
-    private readonly IRobotRepository robotRepository;
+    private readonly IBaseRepository<Robot> robotRepository;
     private readonly IMapper mapper;
-    public RobotService(IRobotRepository robotRepository, IMapper mapper)
+
+    public RobotService(IBaseRepository<Robot> robotRepository, IMapper mapper)
     {
         this.robotRepository = robotRepository;
         this.mapper = mapper;
@@ -18,30 +19,41 @@ public class RobotService:IRobotService
 
     public async Task<Robot?> Create(CreateRobotDTO entity)
     {
-        var result = await robotRepository.Create(mapper.Map<Robot>(entity));
-        return result;
+        var robot = mapper.Map<Robot>(entity);
+        await robotRepository.AddAsync(robot);
+        var result = await robotRepository.SaveChangesAsync();
+        if (result > 0) return robot;
+        return null;
     }
 
     public async Task<bool> Delete(int id)
     {
-        return await robotRepository.Delete(id);
+        var entityToDelete = await robotRepository.GetByIdAsync(id);
+        if(entityToDelete == null) return false;
+        robotRepository.Delete(entityToDelete);
+
+        return await robotRepository.SaveChangesAsync()>0;
     }
 
     public async Task<List<GetRobotDTO>> GetAll()
     {
-        var result = await robotRepository.GetAll();
+        var result = await robotRepository.GetAllAsync();
         return mapper.Map<List<GetRobotDTO>>(result);
     }
 
     public async Task<GetRobotDTO> GetByID(int id)
     {
-        var robot = await robotRepository.GetByID(id);
+        var robot = await robotRepository.GetByIdAsync(id);
 
         return mapper.Map<GetRobotDTO>(robot);
     }
 
     public async Task<bool> Update(UpdateRobotDTO entity)
     {
-        return await robotRepository.Update(mapper.Map<Robot>(entity));
+        var entityToUpdate = await robotRepository.GetByIdAsync(entity.Id);
+        if(entityToUpdate == null) return false;
+        mapper.Map(entity, entityToUpdate);
+        robotRepository.Update(entityToUpdate);
+        return await robotRepository.SaveChangesAsync()>0;
     }
 }

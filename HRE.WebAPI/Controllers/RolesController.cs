@@ -2,6 +2,7 @@
 using HRE.Application.Interfaces;
 using HRE.Application.Services;
 using HRE.Domain.Entities;
+using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRE.WebAPI.Controllers
@@ -16,7 +17,7 @@ namespace HRE.WebAPI.Controllers
         {
             this.roleService = roleService;
         }
-
+        [RequiredPermission("Tạo vai trò mới")]
         [HttpPost]
         public async Task<ActionResult<Role>> Create([FromBody] RoleDTO entity)
         {
@@ -25,26 +26,28 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
+        [RequiredPermission("Cập nhật thông tin vai trò")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] RoleDTO entity)
         {
             bool result = await roleService.Update(id, entity);
             return result ? NoContent() : BadRequest();
         }
+        [RequiredPermission("Xóa vai trò")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             bool result = await roleService.Delete(id);
             return result ? NoContent() : BadRequest();
         }
-
+        [RequiredPermission("Xem danh sách vai trò")]
         [HttpGet]
-        public async Task<ActionResult<List<GetRoleDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<GetRoleDTO>>> Get()
         {
             var result = await roleService.Get();
             return Ok(result);
         }
-
+        [RequiredPermission("Xem chi tiết thông tin vai trò")]
         [HttpGet("{id}")]
         public async Task<ActionResult<GetRoleDTO>> GetByID([FromRoute] int id)
         {
@@ -53,7 +56,7 @@ namespace HRE.WebAPI.Controllers
             return Ok(result);
         }
 
-
+        [RequiredPermission("Cập nhật thông tin vai trò")]
         // THÊM QUYỀN CHO ROLE VÀ XÓA QUYỀN
         [HttpPost("{roleID}/perimssions")]
         public async Task<IActionResult> AddPermissionForRole([FromRoute] int roleID, [FromBody] List<int> permissionIDs)
@@ -61,6 +64,7 @@ namespace HRE.WebAPI.Controllers
             bool result = await roleService.AddPermission(roleID, permissionIDs);
             return result?  Ok(): BadRequest();
         }
+        [RequiredPermission("Cập nhật thông tin vai trò")]
         [HttpDelete("{roleID}/perimssions")]
         public async Task<IActionResult> DeletePermissionForRole([FromRoute] int roleID, [FromBody] List<int> permissionIDs)
         {

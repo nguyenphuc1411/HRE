@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using HRE.WebAPI.Attributes;
 
 namespace HRE.WebAPI.Controllers
 {
@@ -18,7 +19,7 @@ namespace HRE.WebAPI.Controllers
         {
             this.giftRuleService = giftRuleService;
         }
-
+        [RequiredPermission("Tạo quy tắc trúng thưởng mới")]
         [HttpPost]
         public async Task<ActionResult<GiftRule>> Create([FromBody] GiftRuleDTO entity)
         {
@@ -27,23 +28,27 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
+        [RequiredPermission("Cập nhật thông tin quy tắc trúng thưởng")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] GiftRuleDTO entity)
         {
             bool result = await giftRuleService.Update(id, entity);
             return result ? NoContent() : BadRequest();
         }
+        [RequiredPermission("Xóa quy tắc trúng thưởng")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             bool result = await giftRuleService.Delete(id);
             return result ? NoContent() : BadRequest();
         }
+        [RequiredPermission("Xem danh sách quy tắc trúng thưởng")]
         [HttpGet]
-        public async Task<ActionResult<List<GetRuleDTO>>> GetAll()
+        public async Task<ActionResult<IEnumerable<GetRuleDTO>>> GetAll()
         {
             return Ok(await giftRuleService.GetAll());
         }
+        [RequiredPermission("Xem chi tiết thông tin quy tắc trúng thưởng")]
         [HttpGet("{id}")]
         public async Task<ActionResult<GetRuleDTO>> GetByID([FromRoute]int id)
         {
@@ -52,7 +57,7 @@ namespace HRE.WebAPI.Controllers
             return Ok(result);
         }
 
-
+        [RequiredPermission("Cập nhật thông tin quy tắc trúng thưởng")]
         // Sử lý thông tin phần quà trong quy tắc
         [HttpPost("{ruleID}/gifts")]
         public async Task<ActionResult<GiftInRule>> CreateGiftInRule([FromRoute] int ruleID,[FromBody] GiftInRuleDTO entity)
@@ -62,20 +67,21 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
+        [RequiredPermission("Cập nhật thông tin quy tắc trúng thưởng")]
         [HttpPut("gifts/{id}")]
         public async Task<ActionResult> UpdateGiftInRule([FromRoute] int id, [FromBody] GiftInRuleDTO entity)
         {
             bool result = await giftRuleService.UpdateGiftInRule(id, entity);
             return result ? NoContent() : BadRequest();
         }
-
+        [RequiredPermission("Cập nhật thông tin quy tắc trúng thưởng")]
         [HttpDelete("gifts/{id}")]
         public async Task<IActionResult> DeleteGiftInRule([FromRoute] int id)
         {
             bool result = await giftRuleService.DeleteGiftInRule(id);
             return result ? NoContent() : BadRequest();
         }
-
+        [RequiredPermission("Xem chi tiết thông tin quy tắc trúng thưởng")]
         // Thông tin quà trong 1 quy tắc
 
         [HttpGet("{ruleID}/gifts")]

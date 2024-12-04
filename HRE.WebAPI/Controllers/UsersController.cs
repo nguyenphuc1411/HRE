@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.User;
 using HRE.Application.Interfaces;
+using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ namespace HRE.WebAPI.Controllers
         {
             this.userService = userService;
         }
-
+        [RequiredPermission("Tạo người dùng mới")]
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] UserDTO entity)
         {
@@ -24,7 +25,7 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
-
+        [RequiredPermission("Cập nhật thông tin người dùng")]
         [HttpPut("{id}")]
         public async Task<ActionResult> Update([FromRoute]int id,[FromBody] UserDTO entity)
         {
@@ -32,7 +33,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-
+        [RequiredPermission("Xóa người dùng")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete([FromRoute] int id)
         {
@@ -40,13 +41,14 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-
+        [RequiredPermission("Xem danh sách người dùng")]
         [HttpGet]
-        public async Task<ActionResult<List<GetUserDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<GetUserDTO>>> Get()
         {
             var result = await userService.Get();
             return Ok(result);
         }
+        [RequiredPermission("Xem chi tiết thông tin người dùng")]
         [HttpGet("{id}")]
         public async Task<ActionResult<GetUserDTO>> GetByID([FromRoute]int id)
         {

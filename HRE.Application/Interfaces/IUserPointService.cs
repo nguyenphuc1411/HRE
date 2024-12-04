@@ -10,5 +10,5 @@ public interface IUserPointService
 
     Task<bool> Delete(int id);  
 
-    Task<List<UserPoint>> Get();
+    Task<IEnumerable<UserPoint>> Get();
 }

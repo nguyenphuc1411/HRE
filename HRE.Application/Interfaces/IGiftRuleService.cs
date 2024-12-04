@@ -9,7 +9,7 @@ public interface IGiftRuleService
     Task<bool> Update(int id, GiftRuleDTO entity);
     Task<bool> Delete(int id);
 
-    Task<List<GetRuleDTO>> GetAll();
+    Task<IEnumerable<GetRuleDTO>> GetAll();
 
     Task<GetRuleDTO?> GetByID(int id);
 
@@ -22,5 +22,5 @@ public interface IGiftRuleService
 
     // Thông tin quà trong quy tắc
 
-    Task<List<GiftInRule>> GetGiftOfRule(int ruleID);
+    Task<IEnumerable<GiftInRule>> GetGiftOfRule(int ruleID);
 }

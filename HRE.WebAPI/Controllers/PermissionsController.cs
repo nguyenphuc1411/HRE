@@ -1,6 +1,7 @@
 ﻿using HRE.Application.DTOs.Permission;
 using HRE.Application.Interfaces;
 using HRE.Domain.Entities;
+using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,6 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
-
         [HttpPut("{id}")]
         public async Task<ActionResult> Update([FromRoute] int id,[FromBody] PermissionDTO entity)
         {
@@ -32,7 +32,6 @@ namespace HRE.WebAPI.Controllers
            
             return result ? NoContent(): BadRequest();
         }
-
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete([FromRoute] int id)
         {
@@ -41,7 +40,7 @@ namespace HRE.WebAPI.Controllers
             return result ? NoContent() : BadRequest();
         }
         [HttpGet]
-        public async Task<ActionResult<List<Permission>>> Get()
+        public async Task<ActionResult<IEnumerable<Permission>>> Get()
         {
             return Ok(await permissionService.GetAll());
         }
@@ -52,8 +51,6 @@ namespace HRE.WebAPI.Controllers
             if(result == null) return NotFound();
             return Ok(result);
         }
-
-
         // Group
         [HttpPost("/api/groups")]
         public async Task<ActionResult> CreateGroup([FromBody] GroupDTO entity)
@@ -63,7 +60,7 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
-
+        [RequiredPermission("")]
         [HttpPut("/api/groups/{id}")]
         public async Task<ActionResult> UpdateGroup([FromRoute] int id, [FromBody] GroupDTO entity)
         {
@@ -71,7 +68,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-
+        [RequiredPermission("")]
         [HttpDelete("/api/groups/{id}")]
         public async Task<ActionResult> DeleteGroup([FromRoute] int id)
         {
@@ -79,12 +76,13 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-
+        [RequiredPermission("")]
         [HttpGet("/api/groups")]
-        public async Task<ActionResult<List<PermissionGroup>>> GetGroup()
+        public async Task<ActionResult<IEnumerable<PermissionGroup>>> GetGroup()
         {
             return Ok(await permissionService.GetAllGroup());
         }
+        [RequiredPermission("")]
         [HttpGet("/api/groups/{id}")]
         public async Task<ActionResult<Permission>> GetGroupByID([FromRoute] int id)
         {

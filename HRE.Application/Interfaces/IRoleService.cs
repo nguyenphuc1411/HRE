@@ -9,7 +9,7 @@ public interface IRoleService
     Task<bool> Update(int id, RoleDTO entity);
     Task<bool> Delete(int id);
 
-    Task<List<GetRoleDTO>> Get();
+    Task<IEnumerable<GetRoleDTO>> Get();
     Task<GetRoleDTO?> GetById(int id);
     // Sử lý Permission
 

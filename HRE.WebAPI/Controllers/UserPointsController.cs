@@ -1,6 +1,7 @@
 ﻿using HRE.Application.DTOs.UserPoint;
 using HRE.Application.Interfaces;
 using HRE.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace HRE.WebAPI.Controllers
         {
             this.userPointService = userPointService;
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<UserPoint>> CreateOrUpdate([FromBody]UserPointDTO entity)
         {
@@ -24,6 +25,7 @@ namespace HRE.WebAPI.Controllers
             if (result == null) return BadRequest();
             return Ok(result);
         }
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete([FromRoute]int id)
         {
@@ -31,6 +33,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent():BadRequest();
         }
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult> Get()
         {

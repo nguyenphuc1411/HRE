@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.RecyclingMachine;
 using HRE.Application.Interfaces;
+using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ namespace HRE.WebAPI.Controllers
         {
             this.recyclingMachineService = recyclingMachineService;
         }
-
+        [RequiredPermission("Tạo máy tái chế mới")]
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreateRMDTO entity)
         {
@@ -23,8 +24,8 @@ namespace HRE.WebAPI.Controllers
             if (result == null) return BadRequest();
 
             return Ok(result);
-            /*return CreatedAtAction(nameof(GetByID), new { id = result.Id }, result);*/
         }
+        [RequiredPermission("Cập nhật thông tin máy tái chế")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Update([FromRoute] int id,[FromBody] UpdateRMDTO entity)
         {
@@ -32,13 +33,14 @@ namespace HRE.WebAPI.Controllers
             bool result = await recyclingMachineService.Update(entity);
             return result ? NoContent(): BadRequest();
         }
+        [RequiredPermission("Xóa máy tái chế")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete([FromRoute] int id)
         {
             bool result = await recyclingMachineService.Delete(id);
             return result ? NoContent() : BadRequest();
         }
-
+        [RequiredPermission("Xem danh sách máy tái chế")]
         [HttpGet]
         public async Task<ActionResult> Get()
         {

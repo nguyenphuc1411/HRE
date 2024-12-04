@@ -7,24 +7,24 @@ using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Win32;
 using System.Security.Claims;
 
 namespace HRE.Application.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly IUserRepository userRepository;
+    private readonly IBaseRepository<User> userRepository;
     private readonly IConfiguration config;
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly SendMailService sendMailService;
-    private readonly IUserTokenRepository userTokenRepository;
-    public AuthService(IUserRepository userRepository, 
+    private readonly IBaseRepository<UserToken> userTokenRepository;
+    public AuthService(IBaseRepository<User> userRepository, 
         IConfiguration config, 
         IHttpContextAccessor httpContextAccessor, 
-        SendMailService sendMailService, 
-        IUserTokenRepository userTokenRepository)
+        SendMailService sendMailService,
+        IBaseRepository<UserToken> userTokenRepository)
     {
         this.userRepository = userRepository;
         this.config = config;
@@ -40,9 +40,8 @@ public class AuthService : IAuthService
 
     public async Task<string> Login(LoginDTO loginDTO)
     {
-        var user = await userRepository.GetByCondition(x => x.Email == loginDTO.Email && x.Status);
-
-        if (user == null)
+        var user = await userRepository.FindAsync(x => x.Email == loginDTO.Email && x.Status);
+        if (user==null)
         {
             return string.Empty;
         }
@@ -62,8 +61,8 @@ public class AuthService : IAuthService
     public async Task<User?> Register(RegisterDTO registerDTO)
     {
         // Kiem tra username va email
-        var check = await userRepository.GetByCondition(x => x.Email == registerDTO.Email || x.Username == registerDTO.Username);
-        if (check != null) return null;
+        var userFind = await userRepository.FindAsync(x => x.Email == registerDTO.Email || x.Username == registerDTO.Username);
+        if (userFind!=null) return null;
 
         var newUser = new User
         {
@@ -75,9 +74,10 @@ public class AuthService : IAuthService
         };
         newUser.Password = new PasswordHasher<User>().HashPassword(newUser, registerDTO.Password);
 
-        var user = await userRepository.Create(newUser);
+        await userRepository.AddAsync(newUser);
+        var result = await userRepository.SaveChangesAsync();
 
-        if(user!= null)
+        if(result>0)
         {
             // Gửi mail xác nhận đăng ký
 
@@ -90,8 +90,8 @@ public class AuthService : IAuthService
                 TokenType = "CONFIRM REGISTION",
                 UserId = newUser.Id
             };
-            await userTokenRepository.Create(newUserToken);
-
+            await userTokenRepository.AddAsync(newUserToken);
+            await userTokenRepository.SaveChangesAsync();
             var origin = config["OriginFE"] ?? "linkfrontend";
 
             string link = origin + "/confirm-registion?email=" + newUser.Email + "&token=" + tokenNew;
@@ -105,20 +105,20 @@ public class AuthService : IAuthService
             };
             await sendMailService.SendEmailAsync(newMail);
         }
-        return user;
+        return null;
     }
 
     public async Task<bool> RequestForgotPassword(ForgotPasswordDTO forgotPassword)
     {
-        var user = await userRepository.GetByCondition(x=>x.Email== forgotPassword.Email);
-        if (user == null) return false;
+        var user = await userRepository.FindAsync(x=>x.Email== forgotPassword.Email);
+        if (user==null) return false;
 
         // Tạo token mới
         var newToken = Guid.NewGuid().ToString();
         // Tạo resetLink
         string resetPasswordLink = $"{config["OriginFE"]}/account/resetpassword?email={user.Email}&token={newToken}";
         // Check token hệ thống
-        var tokenUsers = await userTokenRepository.GetsByCondition(x => x.UserId == user.Id && x.TokenType == "FORGOT PASSWORD");
+        var tokenUsers = await userTokenRepository.FindAllAsync(x => x.UserId == user.Id && x.TokenType == "FORGOT PASSWORD");
         if (tokenUsers.Count()==0)
         {
             // Chưa có trong hệ thống và xác nhận gửi mail
@@ -140,9 +140,9 @@ public class AuthService : IAuthService
                     Email = user.Email,
                     UserId = user.Id
                 };
-                var result = await userTokenRepository.Create(userToken);
+                await userTokenRepository.AddAsync(userToken);
 
-                return result != null;
+                return await userTokenRepository.SaveChangesAsync() > 0;
             }
             else
             {
@@ -178,30 +178,30 @@ public class AuthService : IAuthService
                 Email = user.Email,
                 UserId = user.Id
             };
-            var result = await userTokenRepository.Create(userToken1);
+            await userTokenRepository.AddAsync(userToken1);
 
-            return result != null;
+            return await userTokenRepository.SaveChangesAsync() > 0;
         }
         return false;
     }
 
     public async Task<string> ConfirmRegistion(ConfirmRegistion confirmRegistion)
     {
-        var check = await userTokenRepository.GetByCondition(x=>x.Email==confirmRegistion.Email &&
+        var check = await userTokenRepository.FindAsync(x=>x.Email==confirmRegistion.Email &&
         x.Token==confirmRegistion.Token&&x.TokenType== "CONFIRM REGISTION" && !x.IsUsed);
 
-        if (check == null) return string.Empty;
+        if (check==null) return string.Empty;
 
-        var user = await userRepository.GetByCondition(x => x.Email == confirmRegistion.Email);
-        if(user == null) return string.Empty;
+        var user = await userRepository.FindAsync(x => x.Email == confirmRegistion.Email);
+        if(user==null) return string.Empty;
         user.Status = true;
-
-        var result = await userRepository.Update(user);
-
-        if (result)
+        userRepository.Update(user);
+        var result = await userRepository.SaveChangesAsync();
+        if (result>0)
         {
             check.IsUsed = true;
-            await userTokenRepository.Update(check);
+            userTokenRepository.Update(check);
+            await userTokenRepository.SaveChangesAsync();
             var token = AuthExtentions.GenerateToken(user.Id.ToString(), config["JWT:Key"] ?? throw new Exception("Not found key for JWT"));
             return token;
         }
@@ -210,25 +210,24 @@ public class AuthService : IAuthService
 
     public async Task<bool> ResetPassword(ResetPasswordDTO resetPassword)
     {
-        var userToken = await userTokenRepository.GetByCondition(x => x.TokenType == "FORGOT PASSWORD" && x.ExpirationDate > DateTime.Now &&
+        var userToken = await userTokenRepository.FindAsync(x => x.TokenType == "FORGOT PASSWORD" && x.ExpirationDate > DateTime.Now &&
         x.Token == resetPassword.Token && x.Email == resetPassword.Email && !x.IsUsed);
         if (userToken == null) return false;
 
-        var user = await userRepository.GetByCondition(x => x.Email == resetPassword.Email);
+        var user = await userRepository.FindAsync(x => x.Email == resetPassword.Email);
         if(user == null) return false;
 
         user.Password = new PasswordHasher<User>().HashPassword(user,resetPassword.NewPassword);
 
-        return await userRepository.Update(user);
+        userRepository.Update(user);
+        return await userRepository.SaveChangesAsync()>0;
     }
 
     public async Task<GetUserDTO> Get()
     {
         int userID = GetUserID();
 
-        var data = await userRepository.GetByIDQuery(userID);
-        if (data == null) throw new Exception("Not found user by ID");
-        var result = new GetUserDTO
+        var data = await userRepository.AsQueryable().Where(x=>x.Id==userID).Select(data=>new GetUserDTO
         {
             Id = data.Id,
             Fullname = data.Fullname,
@@ -238,7 +237,8 @@ public class AuthService : IAuthService
             DateAdded = data.DateAdded,
             RoleId = data.RoleId,
             RoleName = data.Role.RoleName
-        };
-        return result;
+        }).FirstOrDefaultAsync();
+        if (data == null) throw new Exception("Not found user by ID");
+        return data;
     }
 }

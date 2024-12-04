@@ -10,16 +10,16 @@ internal class DataSeeder(AppDbContext context) : IDataSeeder
     {
         if (await context.Database.CanConnectAsync())
         {
-            if (!context.Roles.Any())
-            {
-                var roles = GetRoles();
-                await context.Roles.AddRangeAsync(roles);
-                await context.SaveChangesAsync();
-            }           
             if (!context.PermissionGroups.Any())
             {
                 var groups = GetGroups();
                 await context.PermissionGroups.AddRangeAsync(groups);
+                await context.SaveChangesAsync();
+            }
+            if (!context.Roles.Any())
+            {
+                var roles = GetRoles();
+                await context.Roles.AddRangeAsync(roles);
                 await context.SaveChangesAsync();
             }
         }
@@ -148,7 +148,7 @@ internal class DataSeeder(AppDbContext context) : IDataSeeder
         }),
 
         // PG
-        CreatePermissionGroup("PG", new string[] { })
+        CreatePermissionGroup("PG", new string[] { "PG" })
     };
 
         return groups;
@@ -163,42 +163,62 @@ internal class DataSeeder(AppDbContext context) : IDataSeeder
             Permissions = permissionList
         };
     }
-  
+
     private IEnumerable<Role> GetRoles()
     {
         var user = new User
         {
             Username = "admin",
             Fullname = "Nguyen Thanh Phuc",
-            Email = "nguyenphuc14112003@gmail.com"
+            Email = "nguyenphuc14112003@gmail.com",
+            Status = true
         };
 
         // Mã hóa mật khẩu
         var passwordHasher = new PasswordHasher<User>();
         user.Password = passwordHasher.HashPassword(user, "Phuc.1411");
 
-        var roles = new List<Role>()
+        var roles = new List<Role>
+    {
+        new Role
         {
-            new Role
-                {
-                    RoleName = "SYSTEMUSER",
-                    Description = "Vai trò người dùng hệ thống",
-                    Users = new List<User>
-                    {
-                        user
-                    }
-                },
-                 new Role
-                {
-                    RoleName = "PG",
-                    Description = "Vai trò nhân viên PG"
-                },
-                  new Role
-                {
-                    RoleName = "CUSTOMER",
-                    Description = "Vai trò khách hàng"
-                }
-        };
+            RoleName = "SYSTEMUSER",
+            Description = "Vai trò người dùng hệ thống",
+            Users = new List<User> { user },
+            RolePermissions = GetSystemUserPermissions() // Thêm quyền cho SYSTEMUSER
+        },
+        new Role
+        {
+            RoleName = "PG",
+            Description = "Vai trò nhân viên PG",
+            RolePermissions = GetPGPermissions() // Thêm quyền cho PG
+        },
+        new Role
+        {
+            RoleName = "CUSTOMER",
+            Description = "Vai trò khách hàng",
+            RolePermissions = new List<RolePermission>() // Không có quyền cho khách hàng
+        }
+    };
+
         return roles;
+    }
+
+    private List<RolePermission> GetSystemUserPermissions()
+    {
+        var permissions = context.Permissions.Where(x=>x.PermissionName!="PG").ToList(); // Lấy tất cả quyền từ bảng Permissions
+        return permissions.Select(p => new RolePermission
+        {
+            PermissionId = p.Id
+        }).ToList();
+    }
+
+    private List<RolePermission> GetPGPermissions()
+    {
+        var permissions = context.Permissions.Where(p => p.PermissionName == "PG").ToList();
+        return permissions.Select(p => new RolePermission
+        {
+            PermissionId = p.Id
+        }).ToList();
     }
 }

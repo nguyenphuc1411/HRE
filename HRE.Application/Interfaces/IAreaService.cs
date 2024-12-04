@@ -11,5 +11,5 @@ public interface IAreaService
     Task<bool> Delete(int id);
     Task<GetAreaDTO?> GetById(int id);
 
-    Task<List<GetAreaDTO>> GetAll();
+    Task<IEnumerable<GetAreaDTO>> GetAll();
 }

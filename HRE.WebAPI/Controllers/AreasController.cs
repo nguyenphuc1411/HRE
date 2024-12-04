@@ -17,7 +17,7 @@ namespace HRE.WebAPI.Controllers
         {
             this.areaService = areaService;
         }
-
+        [RequiredPermission("Tạo khu vực mới")]
         [HttpPost]
         public async Task<ActionResult<Area>> Create([FromBody] AreaDTO entity)
         {
@@ -26,27 +26,28 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
+        [RequiredPermission("Cập nhật thông tin khu vực")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] AreaDTO entity)
         {
             bool result = await areaService.Update(id,entity);
             return result ? NoContent() : BadRequest();
         }
+        [RequiredPermission("Xóa khu vực")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             bool result = await areaService.Delete(id);
             return result ? NoContent() : BadRequest();
         }
-
         [RequiredPermission("Xem danh sách khu vực")]
         [HttpGet]
-        public async Task<ActionResult<List<GetAreaDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<GetAreaDTO>>> Get()
         {
             var result = await areaService.GetAll();
             return Ok(result);
         }
-
+        [RequiredPermission("Xem chi tiết thông tin khu vực")]
         [HttpGet("{id}")]
         public async Task<ActionResult<GetAreaDTO>> GetByID([FromRoute]int id)
         {

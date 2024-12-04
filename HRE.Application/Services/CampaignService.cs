@@ -9,87 +9,123 @@ namespace HRE.Application.Services;
 
 public class CampaignService : ICampaignService
 {
-    private readonly ICampaignRepository campaignRepository;
+    private readonly IBaseRepository<Campaign> campaignRepository;
     private readonly IMapper mapper;
     private readonly IAuthService authService;
-    private readonly IUserPointRepository userPointRepository;
-    public CampaignService(ICampaignRepository campaignRepository, IMapper mapper, IAuthService authService, IUserPointRepository userPointRepository)
+    private readonly IBaseRepository<UserPoint> userPointRepository;
+    private readonly IBaseRepository<RobotCampaign> robotCampaignRepository;
+    private readonly IBaseRepository<MachineCampaign> machineCampaignRepository;
+    private readonly IBaseRepository<CampaignGiftRule> gifiCampainRepository;
+    public CampaignService(
+        IBaseRepository<Campaign> campaignRepository,
+        IMapper mapper,
+        IAuthService authService,
+        IBaseRepository<UserPoint> userPointRepository,
+        IBaseRepository<RobotCampaign> robotCampaignRepository,
+        IBaseRepository<MachineCampaign> machineCampaignRepository,
+        IBaseRepository<CampaignGiftRule> gifiCampainRepository)
     {
         this.campaignRepository = campaignRepository;
         this.mapper = mapper;
         this.authService = authService;
         this.userPointRepository = userPointRepository;
+        this.robotCampaignRepository = robotCampaignRepository;
+        this.machineCampaignRepository = machineCampaignRepository;
+        this.gifiCampainRepository = gifiCampainRepository;
     }
 
     public async Task<Campaign?> Create(CampaignDTO entity)
     {
-        var newEntity = mapper.Map<Campaign>(entity);
-        return await campaignRepository.Create(newEntity);
+        var campaign = mapper.Map<Campaign>(entity);
+        await campaignRepository.AddAsync(campaign);
+        var result = await campaignRepository.SaveChangesAsync();
+        return result>0?campaign:null;
     }
 
     public async Task<bool> Delete(int id)
     {
-        return await campaignRepository.Delete(id);
+        var entityToDelete = await campaignRepository.GetByIdAsync(id);
+        if (entityToDelete == null) return false;
+        campaignRepository.Delete(entityToDelete);
+        return await campaignRepository.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> Update(int id, CampaignDTO entity)
     {
-        var entityToUpdate = await campaignRepository.GetByID(id);
+        var entityToUpdate = await campaignRepository.GetByIdAsync(id);
         if (entityToUpdate == null) return false;
+
         mapper.Map(entity, entityToUpdate);
-        return await campaignRepository.Update(entityToUpdate);
+        campaignRepository.Update(entityToUpdate);
+
+        return await campaignRepository.SaveChangesAsync() > 0;
     }
 
 
     // ROBOT
     public async Task<bool> AddRobotsToCampaign(int id, List<int> robotIDs)
     {
-        await campaignRepository.BeginTransaction();
+        await robotCampaignRepository.BeginTransactionAsync();
         try
         {
+            var listRobotCampaigns = new List<RobotCampaign>();
             foreach (var item in robotIDs)
             {
-                var newEntity = new RobotCampaign
+                listRobotCampaigns.Add(new RobotCampaign
                 {
                     RobotId = item,
                     CampaignId = id
-                };
-                var result = await campaignRepository.AddRobotToCampaign(newEntity);
-                if (result == null)
-                {
-                    await campaignRepository.RollbackTransaction();
-                    return false;
-                }
+                });             
             }
-            await campaignRepository.CommitTransaction();
-            return true;
+            await robotCampaignRepository.AddRangeAsync(listRobotCampaigns);
+            var result = await robotCampaignRepository.SaveChangesAsync();
+            if (result == listRobotCampaigns.Count())
+            {
+                await robotCampaignRepository.CommitTransactionAsync();
+                return true;
+            }
+            else
+            {
+                await robotCampaignRepository.RollbackTransactionAsync();
+                return false;
+            }
         }
         catch (Exception ex) 
         { 
-            await campaignRepository.RollbackTransaction();
+            await robotCampaignRepository.RollbackTransactionAsync();
             throw new Exception(ex.Message);
         }
     }
     public async Task<bool> RemoveRobotsFromCampaign(int id, List<int> robotIDs)
     {
-        await campaignRepository.BeginTransaction();
+        await robotCampaignRepository.BeginTransactionAsync();
         try
         {
+            var listRobotCampaigns = new List<RobotCampaign>();
             foreach (var item in robotIDs)
-            {              
-                bool result = await campaignRepository.RemoveRobotFromCampaign(id,item);
-                if (!result)
+            {
+                listRobotCampaigns.Add(new RobotCampaign
                 {
-                    await campaignRepository.RollbackTransaction();
-                    return false;
-                }
+                    RobotId = item,
+                    CampaignId = id
+                });
             }
-            await campaignRepository.CommitTransaction();
-            return true;
+            robotCampaignRepository.DeleteRange(listRobotCampaigns);
+            var result = await robotCampaignRepository.SaveChangesAsync();
+            if (result == listRobotCampaigns.Count())
+            {
+                await robotCampaignRepository.CommitTransactionAsync();
+                return true;
+            }
+            else
+            {
+                await robotCampaignRepository.RollbackTransactionAsync();
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            await campaignRepository.RollbackTransaction();
+            await robotCampaignRepository.RollbackTransactionAsync();
             throw new Exception(ex.Message);
         }
     }
@@ -97,52 +133,67 @@ public class CampaignService : ICampaignService
     // Machine
     public async Task<bool> AddRMsToCampaign(int id, List<int> machineIDs)
     {
-        await campaignRepository.BeginTransaction();
+        await machineCampaignRepository.BeginTransactionAsync();
         try
         {
+            var listMachineCampaigns = new List<MachineCampaign>();
             foreach (var item in machineIDs)
             {
-                var newEntity = new MachineCampaign
+                listMachineCampaigns.Add(new MachineCampaign
                 {
                     MachineId = item,
                     CampaignId = id
-                };
-                var result = await campaignRepository.AddRMToCampaign(newEntity);
-                if (result == null)
-                {
-                    await campaignRepository.RollbackTransaction();
-                    return false;
-                }
+                });
             }
-            await campaignRepository.CommitTransaction();
-            return true;
+            await machineCampaignRepository.AddRangeAsync(listMachineCampaigns);
+            var result = await machineCampaignRepository.SaveChangesAsync();
+            if (result == listMachineCampaigns.Count())
+            {
+                await machineCampaignRepository.CommitTransactionAsync();
+                return true;
+            }
+            else
+            {
+                await machineCampaignRepository.RollbackTransactionAsync();
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            await campaignRepository.RollbackTransaction();
+            await machineCampaignRepository.RollbackTransactionAsync();
             throw new Exception(ex.Message);
         }
     }
     public async Task<bool> RemoveRMsFromCampaign(int id, List<int> machineIDs)
     {
-        await campaignRepository.BeginTransaction();
+        await machineCampaignRepository.BeginTransactionAsync();
         try
         {
+            var listMachineCampaigns = new List<MachineCampaign>();
             foreach (var item in machineIDs)
             {
-                bool result = await campaignRepository.RemoveRMFromCampaign(id, item);
-                if (!result)
+                listMachineCampaigns.Add(new MachineCampaign
                 {
-                    await campaignRepository.RollbackTransaction();
-                    return false;
-                }
+                    MachineId = item,
+                    CampaignId = id
+                });
             }
-            await campaignRepository.CommitTransaction();
-            return true;
+            machineCampaignRepository.DeleteRange(listMachineCampaigns);
+            var result = await machineCampaignRepository.SaveChangesAsync();
+            if (result == listMachineCampaigns.Count())
+            {
+                await machineCampaignRepository.CommitTransactionAsync();
+                return true;
+            }
+            else
+            {
+                await machineCampaignRepository.RollbackTransactionAsync();
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            await campaignRepository.RollbackTransaction();
+            await machineCampaignRepository.RollbackTransactionAsync();
             throw new Exception(ex.Message);
         }
     }
@@ -152,56 +203,35 @@ public class CampaignService : ICampaignService
     {
         var newEntity = mapper.Map<CampaignGiftRule>(entity);
         newEntity.CampaignId=campaignID;
-        return await campaignRepository.AddGiftToCampaign(newEntity);
+
+        await gifiCampainRepository.AddAsync(newEntity);
+
+        var result = await gifiCampainRepository.SaveChangesAsync();
+        return result > 0 ? newEntity:null;
     }
     public async Task<bool> UpdateGiftInCampaign(int id, CampaignGiftRuleDTO entity)
     {
-        var entityToUpdate = await campaignRepository.GetGiftByID(id);
+        var entityToUpdate = await gifiCampainRepository.GetByIdAsync(id);
         if (entityToUpdate == null) return false;
         mapper.Map(entity, entityToUpdate);
-        return await campaignRepository.UpdateGiftFromCampaign(entityToUpdate);
+        gifiCampainRepository.Update(entityToUpdate);
+
+        return await gifiCampainRepository.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> RemoveGiftInCampaign(int id)
     {
-        return await campaignRepository.RemoveGiftFromCampaign(id);
+        var entityToDelete = await gifiCampainRepository.GetByIdAsync(id);
+        if (entityToDelete == null) return false;
+        gifiCampainRepository.Delete(entityToDelete);
+        return await gifiCampainRepository.SaveChangesAsync() > 0;
     }
 
     // VẬN HÀNH CHIẾN DỊCH
 
     public async Task<Reward?> Spin(int id)
     {
-        int userID = authService.GetUserID();
-
-        var userPoint = await userPointRepository.GetByCondition(x=>x.UserId== userID&&x.CampaignId==id);
-        if(userPoint==null) return null;
-
-        var rules = await campaignRepository.GetRuleForCampaign();
-
-        var applyRule = rules.Where(x=>x.MinPoints>=userPoint.Points&& x.MaxPoints<=userPoint.Points).FirstOrDefault();
-        if(applyRule==null) return null;
-
-        // Danh sách phần quà và tỷ lệ
-        var gifts = applyRule.GiftInRules.Select(x => new { x.GiftId, x.Probability }).ToList();
-
-        // Tính tổng xác suất
-        double totalProbability = gifts.Sum(x => x.Probability);
-        // Sinh số ngẫu nhiên trong khoảng [0, totalProbability]
-        double randomValue = new Random().NextDouble() * totalProbability;
-        double cumulative = 0;
-
-   /*     // Tìm phần quà trúng thưởng
-        foreach (var gift in gifts)
-        {
-            cumulative += gift.Probability;
-            if (randomValue <= cumulative)
-            {
-                return await rewardRepository.GetRewardById(gift.GiftId);
-            }
-        }*/
-
-        return null; // Kh
+       throw new NotImplementedException();
     }
 }
 
-}

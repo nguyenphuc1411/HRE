@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRE.WebAPI.Controllers
@@ -13,7 +14,7 @@ namespace HRE.WebAPI.Controllers
         {
             this.environment = environment;
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> Create([FromForm] IFormFile file)
         {
@@ -40,7 +41,7 @@ namespace HRE.WebAPI.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpDelete("{filePath}")]
         public ActionResult Delete([FromRoute] string filePath)
         {
