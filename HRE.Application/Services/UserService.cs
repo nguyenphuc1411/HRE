@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using HRE.Application.DTOs.User;
+using HRE.Application.Extentions;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -53,7 +55,7 @@ public class UserService : IUserService
         return await userRepository.SaveChangesAsync()>0;
     }
 
-    public async Task<IEnumerable<GetUserDTO>> Get()
+    public async Task<PaginatedModel<GetUserDTO>> Get(QueryModel query)
     {
         return await userRepository.AsQueryable().Select(x => new GetUserDTO
         {
@@ -65,7 +67,7 @@ public class UserService : IUserService
             DateAdded = x.DateAdded,
             RoleId = x.RoleId,
             RoleName = x.Role.RoleName
-        }).ToListAsync();
+        }).ApplyQuery(query,u=>u.Email);
     }
 
     public async Task<GetUserDTO?> GetById(int id)
@@ -94,5 +96,9 @@ public class UserService : IUserService
 
         return permissions;
     }
+
+
+    // Quay thưởng
+
 
 }

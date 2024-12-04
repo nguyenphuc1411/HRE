@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using HRE.Application.DTOs.GiftRule;
+using HRE.Application.Extentions;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +49,7 @@ public class GiftRuleService : IGiftRuleService
         return await giftRuleRepository.SaveChangesAsync() > 0;
     }
 
-    public async Task<IEnumerable<GetRuleDTO>> GetAll()
+    public async Task<PaginatedModel<GetRuleDTO>> GetAll(QueryModel query)
     {
         return await giftRuleRepository.AsQueryable()
             .Select(x => new GetRuleDTO
@@ -62,7 +64,7 @@ public class GiftRuleService : IGiftRuleService
                     .SelectMany(giftInRule => giftInRule.CampaignGiftRules)
                     .Count() 
             })
-            .ToListAsync(); 
+            .ApplyQuery(query,g=>g.RuleName); 
     }
     public async Task<GetRuleDTO?> GetByID(int id)
     {

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using HRE.Application.DTOs.Role;
+using HRE.Application.Extentions;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +49,7 @@ public class RoleService:IRoleService
         return await roleRepository.SaveChangesAsync() > 0;
     }
 
-    public async Task<IEnumerable<GetRoleDTO>> Get()
+    public async Task<PaginatedModel<GetRoleDTO>> Get(QueryModel query)
     {
         return await roleRepository.AsQueryable().Select(x => new GetRoleDTO
         {
@@ -55,7 +57,7 @@ public class RoleService:IRoleService
             RoleName=x.RoleName,
             Description =x.Description,
             TotalAccount = x.Users.Count()
-        }).ToListAsync();
+        }).ApplyQuery(query,r=>r.RoleName);
     }
 
     public async Task<GetRoleDTO?> GetById(int id)

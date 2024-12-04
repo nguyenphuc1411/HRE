@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using HRE.Application.DTOs.UserPoint;
+using HRE.Application.Extentions;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
 
@@ -47,8 +49,8 @@ public class UserPointService : IUserPointService
         return await userPointRepository.SaveChangesAsync() > 0;
     }
 
-    public async Task<IEnumerable<UserPoint>> Get()
+    public async Task<PaginatedModel<UserPoint>> Get(QueryModel query)
     {
-        return await userPointRepository.GetAllAsync();
+        return await userPointRepository.AsQueryable().ApplyQuery(query);
     }
 }

@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using HRE.Application.DTOs.Robot;
+using HRE.Application.Extentions;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
 
@@ -35,10 +38,11 @@ public class RobotService:IRobotService
         return await robotRepository.SaveChangesAsync()>0;
     }
 
-    public async Task<List<GetRobotDTO>> GetAll()
+    public async Task<PaginatedModel<GetRobotDTO>> GetAll(QueryModel query)
     {
-        var result = await robotRepository.GetAllAsync();
-        return mapper.Map<List<GetRobotDTO>>(result);
+        return await robotRepository.AsQueryable()
+            .ProjectTo<GetRobotDTO>(mapper.ConfigurationProvider)
+            .ApplyQuery(query,x=>x.RobotCode);
     }
 
     public async Task<GetRobotDTO> GetByID(int id)

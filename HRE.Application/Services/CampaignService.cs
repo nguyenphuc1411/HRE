@@ -226,12 +226,5 @@ public class CampaignService : ICampaignService
         gifiCampainRepository.Delete(entityToDelete);
         return await gifiCampainRepository.SaveChangesAsync() > 0;
     }
-
-    // VẬN HÀNH CHIẾN DỊCH
-
-    public async Task<Reward?> Spin(int id)
-    {
-       throw new NotImplementedException();
-    }
 }
 

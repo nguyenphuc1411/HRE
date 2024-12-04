@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.Area;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
@@ -42,9 +43,9 @@ namespace HRE.WebAPI.Controllers
         }
         [RequiredPermission("Xem danh sách khu vực")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetAreaDTO>>> Get()
+        public async Task<ActionResult<PaginatedModel<GetAreaDTO>>> Get([FromQuery] QueryModel query)
         {
-            var result = await areaService.GetAll();
+            var result = await areaService.GetAll(query);
             return Ok(result);
         }
         [RequiredPermission("Xem chi tiết thông tin khu vực")]

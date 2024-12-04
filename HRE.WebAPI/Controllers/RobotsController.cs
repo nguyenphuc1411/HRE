@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.Robot;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,9 @@ namespace HRE.WebAPI.Controllers
         }
         [RequiredPermission("Xem danh sách Robot")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetRobotDTO>>> Get()
+        public async Task<ActionResult<PaginatedModel<GetRobotDTO>>> Get([FromQuery] QueryModel query)
         {
-            var result = await robotService.GetAll();
+            var result = await robotService.GetAll(query);
             return Ok(result);
         }
         [RequiredPermission("Xem chi tiết thông tin Robot")]

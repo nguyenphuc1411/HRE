@@ -1,4 +1,5 @@
 ﻿using HRE.Application.DTOs.Role;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 
 namespace HRE.Application.Interfaces;
@@ -9,7 +10,7 @@ public interface IRoleService
     Task<bool> Update(int id, RoleDTO entity);
     Task<bool> Delete(int id);
 
-    Task<IEnumerable<GetRoleDTO>> Get();
+    Task<PaginatedModel<GetRoleDTO>> Get(QueryModel query);
     Task<GetRoleDTO?> GetById(int id);
     // Sử lý Permission
 

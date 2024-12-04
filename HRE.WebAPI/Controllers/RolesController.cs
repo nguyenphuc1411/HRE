@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.Role;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Application.Services;
 using HRE.Domain.Entities;
 using HRE.WebAPI.Attributes;
@@ -42,9 +43,9 @@ namespace HRE.WebAPI.Controllers
         }
         [RequiredPermission("Xem danh sách vai trò")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetRoleDTO>>> Get()
+        public async Task<ActionResult<PaginatedModel<GetRoleDTO>>> Get([FromQuery] QueryModel query)
         {
-            var result = await roleService.Get();
+            var result = await roleService.Get(query);
             return Ok(result);
         }
         [RequiredPermission("Xem chi tiết thông tin vai trò")]

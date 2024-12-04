@@ -10,7 +10,7 @@ public class Reward
 
     [Column(TypeName = "varchar(max)")]
     public string QRCode { get; set; } = default!;
-    public DateTime ExpirationDate { get; set; }
+    public DateTime ExpirationDate { get; set; } = DateTime.Now.AddDays(1);
     public bool IsUsed { get; set; } = false;
 
     public DateTime GeneratedAt { get; set; } = DateTime.Now;

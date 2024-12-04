@@ -1,4 +1,5 @@
 ﻿using HRE.Application.DTOs.Permission;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 
 namespace HRE.Application.Interfaces;
@@ -13,7 +14,7 @@ public interface IPermissionService
 
     Task<Permission?> GetByID(int id);
 
-    Task<IEnumerable<Permission>> GetAll();
+    Task<PaginatedModel<Permission>> GetAll(QueryModel query);
 
     Task<PermissionGroup?> CreateGroup(GroupDTO entity);
 
@@ -23,5 +24,5 @@ public interface IPermissionService
 
     Task<PermissionGroup?> GetGroupByID(int id);
 
-    Task<IEnumerable<PermissionGroup>> GetAllGroup();
+    Task<PaginatedModel<PermissionGroup>> GetAllGroup(QueryModel query);
 }

@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.RecyclingMachine;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -42,9 +43,9 @@ namespace HRE.WebAPI.Controllers
         }
         [RequiredPermission("Xem danh sách máy tái chế")]
         [HttpGet]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult<PaginatedModel<GetRMDTO>>> Get([FromQuery] QueryModel query)
         {
-            var result = await recyclingMachineService.GetAll();
+            var result = await recyclingMachineService.GetAll(query);
             return Ok(result);
         }
     }

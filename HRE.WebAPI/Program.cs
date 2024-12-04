@@ -32,6 +32,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICampaignService, CampaignService>();
 builder.Services.AddScoped<IUserPointService, UserPointService>();
+builder.Services.AddScoped<IRewardService, RewardService>();
 
 builder.Services.AddTransient<SendMailService>();
 
@@ -110,7 +111,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseMiddleware<AuthorizationMiddleware>();
+//app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 

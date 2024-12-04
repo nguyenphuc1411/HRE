@@ -122,15 +122,5 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-
-        // Vận hành chiến dịch
-
-        // Quay thưởng
-        [HttpPost("{id}/spins")]
-        public async Task<ActionResult> Spin([FromRoute] int id)
-        {
-            return Ok();
-        }
-
     }
 }

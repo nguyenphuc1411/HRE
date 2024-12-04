@@ -6,6 +6,7 @@ using HRE.Application.DTOs.GiftRule;
 using HRE.Application.DTOs.Location;
 using HRE.Application.DTOs.Permission;
 using HRE.Application.DTOs.RecyclingMachine;
+using HRE.Application.DTOs.Reward;
 using HRE.Application.DTOs.Robot;
 using HRE.Application.DTOs.Role;
 using HRE.Application.DTOs.User;
@@ -60,5 +61,8 @@ public class MappingProfile:Profile
 
         // User Point
         CreateMap<UserPointDTO, UserPoint>();
+
+        // Reward
+        CreateMap<RewardDTO,Reward>();
     }
 }

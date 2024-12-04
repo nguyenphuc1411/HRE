@@ -1,11 +1,11 @@
-﻿
-
-using AutoMapper;
+﻿using AutoMapper;
 using HRE.Application.DTOs.Permission;
+using HRE.Application.Extentions;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
-using System.Security;
+using Microsoft.EntityFrameworkCore;
 
 namespace HRE.Application.Services;
 
@@ -52,9 +52,9 @@ public class PermissionService : IPermissionService
         return await permissionRepository.GetByIdAsync(id);
     }
 
-    public async Task<IEnumerable<Permission>> GetAll()
+    public async Task<PaginatedModel<Permission>> GetAll(QueryModel query)
     {
-        return await permissionRepository.GetAllAsync();
+       return await permissionRepository.AsQueryable().ApplyQuery(query,p=>p.PermissionName);
     }
 
     // GROUP
@@ -89,8 +89,8 @@ public class PermissionService : IPermissionService
         return await permissionGroupRepository.GetByIdAsync(id);
     }
 
-    public async Task<IEnumerable<PermissionGroup>> GetAllGroup()
-    {
-        return await permissionGroupRepository.GetAllAsync();
+    public async Task<PaginatedModel<PermissionGroup>> GetAllGroup(QueryModel query)
+    { 
+        return await permissionGroupRepository.AsQueryable().ApplyQuery(query,g=>g.GroupName);
     }
 }

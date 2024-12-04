@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.Permission;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
@@ -40,9 +41,9 @@ namespace HRE.WebAPI.Controllers
             return result ? NoContent() : BadRequest();
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Permission>>> Get()
+        public async Task<ActionResult<PaginatedModel<Permission>>> Get([FromQuery] QueryModel query)
         {
-            return Ok(await permissionService.GetAll());
+            return Ok(await permissionService.GetAll(query));
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Permission>> GetByID([FromRoute]int id)
@@ -78,9 +79,9 @@ namespace HRE.WebAPI.Controllers
         }
         [RequiredPermission("")]
         [HttpGet("/api/groups")]
-        public async Task<ActionResult<IEnumerable<PermissionGroup>>> GetGroup()
+        public async Task<ActionResult<IEnumerable<PermissionGroup>>> GetGroup([FromQuery]QueryModel query)
         {
-            return Ok(await permissionService.GetAllGroup());
+            return Ok(await permissionService.GetAllGroup(query));
         }
         [RequiredPermission("")]
         [HttpGet("/api/groups/{id}")]

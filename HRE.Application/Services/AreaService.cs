@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using HRE.Application.DTOs.Area;
+using HRE.Application.Extentions;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +38,7 @@ public class AreaService:IAreaService
         return await areaRepository.SaveChangesAsync()>0;
     }
 
-    public async Task<IEnumerable<GetAreaDTO>> GetAll()
+    public async Task<PaginatedModel<GetAreaDTO>> GetAll(QueryModel query)
     {
         var result = await areaRepository.AsQueryable().Select(x => new GetAreaDTO
         {
@@ -44,7 +46,7 @@ public class AreaService:IAreaService
             Name = x.Name,
             Description = x.Description,
             TotalLocationOfArea = x.Locations.Count()
-        }).ToListAsync();
+        }).ApplyQuery(query,a=>a.Name);
         return result;
     }
 

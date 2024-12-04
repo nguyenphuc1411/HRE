@@ -1,5 +1,6 @@
 ﻿
 using HRE.Application.DTOs.UserPoint;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 
 namespace HRE.Application.Interfaces;
@@ -10,5 +11,5 @@ public interface IUserPointService
 
     Task<bool> Delete(int id);  
 
-    Task<IEnumerable<UserPoint>> Get();
+    Task<PaginatedModel<UserPoint>> Get(QueryModel query);
 }

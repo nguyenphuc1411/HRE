@@ -1,5 +1,6 @@
 ﻿
 using HRE.Application.DTOs.User;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 
 namespace HRE.Application.Interfaces;
@@ -14,7 +15,7 @@ public interface IUserService
 
     Task<GetUserDTO?> GetById(int id);
 
-    Task<IEnumerable<GetUserDTO>> Get();
+    Task<PaginatedModel<GetUserDTO>> Get(QueryModel query);
 
     Task<IEnumerable<string>> GetRolePermissions(int userId);
 }

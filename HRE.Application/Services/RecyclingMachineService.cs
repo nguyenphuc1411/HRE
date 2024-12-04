@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using HRE.Application.DTOs.RecyclingMachine;
 using HRE.Application.DTOs.Robot;
+using HRE.Application.Extentions;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
 
@@ -33,10 +36,12 @@ public class RecyclingMachineService : IRecyclingMachineService
         return await rMRepository.SaveChangesAsync() > 0;
     }
 
-    public async Task<List<GetRMDTO>> GetAll()
+    public async Task<PaginatedModel<GetRMDTO>> GetAll(QueryModel query)
     {
-        var data = await rMRepository.GetAllAsync();
-        return mapper.Map<List<GetRMDTO>>(data);
+        var data = await rMRepository.AsQueryable()
+            .ProjectTo<GetRMDTO>(mapper.ConfigurationProvider)
+            .ApplyQuery(query,x=>x.MachineCode);
+        return data;
     }
 
     public Task<GetRobotDTO> GetByID(int id)

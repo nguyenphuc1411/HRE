@@ -3,9 +3,8 @@ using HRE.Application.Interfaces;
 using HRE.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json.Serialization;
-using System.Text.Json;
 using HRE.WebAPI.Attributes;
+using HRE.Application.Models;
 
 namespace HRE.WebAPI.Controllers
 {
@@ -44,9 +43,9 @@ namespace HRE.WebAPI.Controllers
         }
         [RequiredPermission("Xem danh sách quy tắc trúng thưởng")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetRuleDTO>>> GetAll()
+        public async Task<ActionResult<PaginatedModel<GetRuleDTO>>> GetAll([FromQuery] QueryModel query)
         {
-            return Ok(await giftRuleService.GetAll());
+            return Ok(await giftRuleService.GetAll(query));
         }
         [RequiredPermission("Xem chi tiết thông tin quy tắc trúng thưởng")]
         [HttpGet("{id}")]

@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.UserPoint;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -35,9 +36,9 @@ namespace HRE.WebAPI.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult<PaginatedModel<UserPoint>>> Get([FromQuery] QueryModel query)
         {
-            var result = await userPointService.Get();
+            var result = await userPointService.Get(query);
 
             return Ok(result);
         }

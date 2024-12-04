@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.User;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -43,9 +44,9 @@ namespace HRE.WebAPI.Controllers
         }
         [RequiredPermission("Xem danh sách người dùng")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetUserDTO>>> Get()
+        public async Task<ActionResult<PaginatedModel<GetUserDTO>>> Get([FromQuery] QueryModel query)
         {
-            var result = await userService.Get();
+            var result = await userService.Get(query);
             return Ok(result);
         }
         [RequiredPermission("Xem chi tiết thông tin người dùng")]
