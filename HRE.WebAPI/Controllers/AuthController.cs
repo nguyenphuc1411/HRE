@@ -30,10 +30,8 @@ namespace HRE.WebAPI.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterDTO registerDTO)
         {
-            var result  = await authService.Register(registerDTO);
-            if(result==null) return BadRequest();
-
-            return Ok(result);
+            bool result  = await authService.Register(registerDTO);
+            return result ? Ok() : BadRequest();
         }
         [HttpPost("confirm-registion")]
         public async Task<ActionResult> ConfrimRegistion([FromBody] ConfirmRegistion confirmRegistion)

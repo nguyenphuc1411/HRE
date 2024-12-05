@@ -57,8 +57,17 @@ namespace HRE.WebAPI.Controllers
             return Ok(result);
         }
 
+
         [RequiredPermission("Cập nhật thông tin vai trò")]
-        // THÊM QUYỀN CHO ROLE VÀ XÓA QUYỀN
+        // Sử lý các quyền cho role
+
+        [HttpGet("{roleID}/permissions")]
+        public async Task<ActionResult<IEnumerable<Permission>>> GetPermissionsOfRole([FromRoute]int roleID)
+        {
+            return Ok(await roleService.GetPermissionOfRole(roleID));
+        }
+
+
         [HttpPost("{roleID}/perimssions")]
         public async Task<IActionResult> AddPermissionForRole([FromRoute] int roleID, [FromBody] List<int> permissionIDs)
         {

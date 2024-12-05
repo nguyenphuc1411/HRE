@@ -57,12 +57,6 @@ public class MappingProfile:Profile
         // Campaign 
         CreateMap<CampaignDTO,Campaign>();
 
-        CreateMap<CampaignGiftRuleDTO, CampaignGiftRule>();
-
-        // User Point
-        CreateMap<UserPointDTO, UserPoint>();
-
-        // Reward
-        CreateMap<RewardDTO,Reward>();
+        CreateMap<CampaignGiftRuleDTO, CampaignGift>();
     }
 }

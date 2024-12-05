@@ -15,7 +15,6 @@ public class Campaign
 
     public ICollection<RobotCampaign> RobotCampaigns { get; set; } = default!;
     public ICollection<MachineCampaign> MachineCampaigns { get; set; } = default!;
-    public ICollection<UserPoint> UserPoints { get; set; } = default!;
-    public ICollection<SpinHistory> SpinHistories { get; set; } = default!;
-    public ICollection<CampaignGiftRule> CampaignGiftRules { get; set; } = default!;
+    public ICollection<UserInteraction> UserInteractions { get; set; } = default!;
+    public ICollection<CampaignGift> CampaignGifts { get; set; } = default!;
 }

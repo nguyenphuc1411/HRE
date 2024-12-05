@@ -19,15 +19,14 @@ namespace HRE.Infrastructure.Persistence
         public required DbSet<RobotCampaign> RobotCampaigns { get; set; }
         public required DbSet<MachineCampaign> MachineCampaigns { get; set; }
         public required DbSet<Campaign> Campaigns { get; set; }
-        public required DbSet<UserPoint> UserPoints { get; set; }
-        public required DbSet<SpinHistory> SpinHistories { get; set; }
-        public required DbSet<Reward> Rewards { get; set; }
-        public required DbSet<RewardRedemption> RewardRedemptions { get; set; }
-        public required DbSet<RewardReturnHistory> RewardReturnHistories { get; set; }
+        public required DbSet<UserInteraction> UserInteractions { get; set; }
+        public required DbSet<QRCode> QRCodes { get; set; }
+        public required DbSet<GiftRedemption> GiftRedemptions { get; set; }
+        public required DbSet<GiftReturn> GiftReturns { get; set; }
         public required DbSet<Gift> Gifts { get; set; }
         public required DbSet<GiftRule> GiftRules { get; set; }
         public required DbSet<GiftInRule> GiftInRules { get; set; }
-        public required DbSet<CampaignGiftRule> CampaignGiftRules { get; set; }
+        public required DbSet<CampaignGift> CampaignGifts { get; set; }
         public required DbSet<Location> Locations { get; set; }
         public required DbSet<Area> Areas { get; set; }
 
@@ -42,11 +41,11 @@ namespace HRE.Infrastructure.Persistence
             // User
             modelBuilder.Entity<User>(options =>
             {
-                options.HasMany(x => x.UserPoints).WithOne(x => x.User).HasForeignKey(x => x.UserId);
-                options.HasMany(x => x.SpinHistories).WithOne(x => x.User).HasForeignKey(x => x.UserId);
-                options.HasMany(x => x.RewardRedemptions).WithOne(x => x.User).HasForeignKey(x => x.UserId);
-                options.HasMany(x => x.RewardReturnHistories).WithOne(x => x.User).HasForeignKey(x => x.UserId);
+                options.HasMany(x => x.UserInteractions).WithOne(x => x.User).HasForeignKey(x => x.UserId);
+                options.HasMany(x => x.GiftRedemptionUsers).WithOne(x => x.User).HasForeignKey(x => x.UserId);
+                options.HasMany(x => x.GiftRedemptionPGs).WithOne(x => x.PGStaff).HasForeignKey(x => x.PGStaffId);
                 options.HasMany(x => x.UserTokens).WithOne(x => x.User).HasForeignKey(x => x.UserId);
+                options.HasMany(x => x.GiftReturns).WithOne(x => x.PGStaff).HasForeignKey(x => x.PGStaffId);
             });
 
             // Role
@@ -58,7 +57,11 @@ namespace HRE.Infrastructure.Persistence
 
             // Robot Machine
             modelBuilder.Entity<Robot>().HasMany(x => x.RobotCampaigns).WithOne(x => x.Robot).HasForeignKey(x => x.RobotId);
-            modelBuilder.Entity<RecyclingMachine>().HasMany(x => x.MachineCampaigns).WithOne(x => x.Machine).HasForeignKey(x => x.MachineId);
+            modelBuilder.Entity<RecyclingMachine>(opt =>
+            {
+                opt.HasMany(x => x.MachineCampaigns).WithOne(x => x.Machine).HasForeignKey(x => x.MachineId);
+                opt.HasMany(x => x.UserInteractions).WithOne(x => x.RecyclingMachine).HasForeignKey(x => x.MachineId);
+            });
 
             //Permission Group
             modelBuilder.Entity<PermissionGroup>()
@@ -67,35 +70,28 @@ namespace HRE.Infrastructure.Persistence
             //Permission
             modelBuilder.Entity<Permission>()
             .HasMany(x => x.RolePermissions).WithOne(x => x.Permission).HasForeignKey(x => x.PermissionId);
+   
 
-            // Reward
-            modelBuilder.Entity<Reward>(options =>
-            {
-                options.HasOne(x => x.SpinHistory).WithOne(x => x.Reward).HasForeignKey<SpinHistory>(x => x.RewardId);
-                options.HasOne(x => x.RewardRedemption).WithOne(x => x.Reward).HasForeignKey<RewardRedemption>(x => x.RewardId);
-            });
+            // Quan he 1-1
 
-
-            // Reward Redemption
-            modelBuilder.Entity<RewardRedemption>(options =>
-            {
-                options.HasOne(x => x.RewardReturnHistory).WithOne(x => x.RewardRedemption).HasForeignKey<RewardReturnHistory>(x => x.RedemptionId);
-            });
+            modelBuilder.Entity<UserInteraction>().HasOne(x => x.QRCode).WithOne(x => x.UserInteraction).HasForeignKey<QRCode>(x => x.InteractionId);
+            modelBuilder.Entity<QRCode>().HasOne(x => x.GiftRedemption).WithOne(x => x.QRCode).HasForeignKey<GiftRedemption>(x => x.QRCodeId);
+            modelBuilder.Entity<GiftRedemption>().HasOne(x => x.GiftReturn).WithOne(x => x.GiftRedemption).HasForeignKey<GiftReturn>(x => x.RedemptionId);
 
             // Campaign
             modelBuilder.Entity<Campaign>(options =>
             {
                 options.HasMany(x => x.RobotCampaigns).WithOne(x => x.Campaign).HasForeignKey(x => x.CampaignId);
                 options.HasMany(x => x.MachineCampaigns).WithOne(x => x.Campaign).HasForeignKey(x => x.CampaignId);
-                options.HasMany(x => x.UserPoints).WithOne(x => x.Campaign).HasForeignKey(x => x.CampaignId);
-                options.HasMany(x => x.SpinHistories).WithOne(x => x.Campaign).HasForeignKey(x => x.CampaignId);
-                options.HasMany(x => x.CampaignGiftRules).WithOne(x => x.Campaign).HasForeignKey(x => x.CampaignId);
+                options.HasMany(x => x.UserInteractions).WithOne(x => x.Campaign).HasForeignKey(x => x.CampaignId);
+                options.HasMany(x => x.CampaignGifts).WithOne(x => x.Campaign).HasForeignKey(x => x.CampaignId);
             });
 
             // Gift
             modelBuilder.Entity<Gift>(options =>
             {
                 options.HasMany(x => x.GiftInRules).WithOne(x => x.Gift).HasForeignKey(x => x.GiftId);
+                options.HasMany(x => x.CampaignGifts).WithOne(x => x.Gift).HasForeignKey(x => x.GiftId);
             });
 
             // Reward Rule

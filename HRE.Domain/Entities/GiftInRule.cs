@@ -8,7 +8,5 @@ public class GiftInRule
     public int RuleId { get; set; }
     public GiftRule GiftRule { get; set; } = default!;
 
-    public int Probability { get; set; }= 0;
-
-    public ICollection<CampaignGiftRule> CampaignGiftRules { get; set; } = new List<CampaignGiftRule>();
+    public int WinningRate { get; set; }= 0;
 }

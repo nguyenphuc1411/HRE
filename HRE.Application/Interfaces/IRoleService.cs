@@ -14,6 +14,7 @@ public interface IRoleService
     Task<GetRoleDTO?> GetById(int id);
     // Sử lý Permission
 
+    Task<IEnumerable<Permission>> GetPermissionOfRole(int roleID);
     Task<bool> AddPermission(int roleID,List<int> permissionIDs);
 
     Task<bool> DeletePermission(int roleID,List<int> permissionIDs);

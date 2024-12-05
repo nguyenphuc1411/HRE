@@ -19,10 +19,9 @@ public class User
 
     public int RoleId {  get; set; }
     public Role Role { get; set; } = default!;
-
-    public ICollection<UserPoint> UserPoints { get; set; } = default!;
-    public ICollection<SpinHistory> SpinHistories { get; set; } = default!;
-    public ICollection<RewardRedemption> RewardRedemptions { get; set; } = default!;
-    public ICollection<RewardReturnHistory> RewardReturnHistories { get; set; } = default!;
     public ICollection<UserToken> UserTokens { get; set; } = default!;
+    public ICollection<UserInteraction> UserInteractions { get; set; } = default!;
+    public ICollection<GiftRedemption> GiftRedemptionUsers { get; set; } = default!;
+    public ICollection<GiftRedemption> GiftRedemptionPGs { get; set; } = default!;
+    public ICollection<GiftReturn> GiftReturns { get; set; } = default!;
 }

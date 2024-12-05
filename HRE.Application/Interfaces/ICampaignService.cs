@@ -20,7 +20,7 @@ public interface ICampaignService
     Task<bool> RemoveRMsFromCampaign(int id, List<int> machineIDs);
 
     // GIFT
-    Task<CampaignGiftRule?> AddGiftToCampaign(int campaignID, CampaignGiftRuleDTO entity);
+    Task<CampaignGift?> AddGiftToCampaign(int campaignID, CampaignGiftRuleDTO entity);
     Task<bool> UpdateGiftInCampaign(int id,CampaignGiftRuleDTO entity);
 
     Task<bool> RemoveGiftInCampaign(int id);

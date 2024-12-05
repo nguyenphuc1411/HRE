@@ -140,4 +140,11 @@ public class RoleService:IRoleService
             throw new Exception(ex.Message);
         }
     }
+
+    public async Task<IEnumerable<Permission>> GetPermissionOfRole(int roleID)
+    {
+        return await rolePermissionRepository.AsQueryable()
+            .Where(x=>x.RoleId==roleID)
+            .Select(x=>x.Permission).ToListAsync();
+    }
 }

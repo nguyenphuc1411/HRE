@@ -16,4 +16,5 @@ public class RecyclingMachine
     public int? LocationId { get; set; }
     public Location? Location { get; set; }
     public ICollection<MachineCampaign> MachineCampaigns { get; set; } = default!;
+    public ICollection<UserInteraction> UserInteractions { get; set; } = default!;
 }

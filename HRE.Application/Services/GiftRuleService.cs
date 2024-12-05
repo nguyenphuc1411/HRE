@@ -60,9 +60,9 @@ public class GiftRuleService : IGiftRuleService
                 MinPoints = x.MinPoints,
                 MaxPoints = x.MaxPoints,
                 Description = x.Description,
-                AppliedLocationCount = x.GiftInRules
-                    .SelectMany(giftInRule => giftInRule.CampaignGiftRules)
-                    .Count() 
+/*                AppliedLocationCount = x.GiftInRules
+                    .SelectMany(giftInRule => giftInRule)
+                    .Count() */
             })
             .ApplyQuery(query,g=>g.RuleName); 
     }
@@ -71,7 +71,7 @@ public class GiftRuleService : IGiftRuleService
         var data = await giftRuleRepository.AsQueryable()
             .Where(x => x.Id == id)
             .Include(x => x.GiftInRules)
-            .ThenInclude(giftInRule => giftInRule.CampaignGiftRules) 
+/*            .ThenInclude(giftInRule => giftInRule.CampaignGiftRules) */
             .FirstOrDefaultAsync();
 
         if (data == null) return null;
@@ -84,9 +84,9 @@ public class GiftRuleService : IGiftRuleService
             MinPoints = data.MinPoints,
             MaxPoints = data.MaxPoints,
             Description = data.Description,
-            AppliedLocationCount = data.GiftInRules
+  /*          AppliedLocationCount = data.GiftInRules
                 .SelectMany(giftInRule => giftInRule.CampaignGiftRules)
-                .Count(),
+                .Count(),*/
         };
 
         return result;

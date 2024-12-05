@@ -48,5 +48,11 @@ namespace HRE.WebAPI.Controllers
             var result = await recyclingMachineService.GetAll(query);
             return Ok(result);
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetByID([FromRoute]int id)
+        {
+            return Ok();
+        }
     }
 }

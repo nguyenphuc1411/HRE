@@ -8,7 +8,7 @@ public interface IAuthService
 {
     Task<string> Login(LoginDTO loginDTO);
 
-    Task<User?> Register(RegisterDTO registerDTO);
+    Task<bool> Register(RegisterDTO registerDTO);
 
     Task<bool> RequestForgotPassword(ForgotPasswordDTO forgotPassword);
 

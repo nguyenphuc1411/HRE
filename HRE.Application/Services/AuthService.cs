@@ -20,17 +20,20 @@ public class AuthService : IAuthService
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly SendMailService sendMailService;
     private readonly IBaseRepository<UserToken> userTokenRepository;
-    public AuthService(IBaseRepository<User> userRepository, 
-        IConfiguration config, 
-        IHttpContextAccessor httpContextAccessor, 
+    private readonly IBaseRepository<Role> roleRepository;
+    public AuthService(IBaseRepository<User> userRepository,
+        IConfiguration config,
+        IHttpContextAccessor httpContextAccessor,
         SendMailService sendMailService,
-        IBaseRepository<UserToken> userTokenRepository)
+        IBaseRepository<UserToken> userTokenRepository,
+        IBaseRepository<Role> roleRepository)
     {
         this.userRepository = userRepository;
         this.config = config;
         this.httpContextAccessor = httpContextAccessor;
         this.sendMailService = sendMailService;
         this.userTokenRepository = userTokenRepository;
+        this.roleRepository = roleRepository;
     }
 
     public int GetUserID()
@@ -58,19 +61,21 @@ public class AuthService : IAuthService
         return AuthExtentions.GenerateToken(user.Id.ToString(), config["JWT:Key"] ?? throw new Exception("No JWT KEY"));
     }
 
-    public async Task<User?> Register(RegisterDTO registerDTO)
+    public async Task<bool> Register(RegisterDTO registerDTO)
     {
         // Kiem tra username va email
         var userFind = await userRepository.FindAsync(x => x.Email == registerDTO.Email || x.Username == registerDTO.Username);
-        if (userFind!=null) return null;
+        if (userFind!=null) return false;
 
+        var roleCustomer = await roleRepository.FindAsync(x=>x.RoleName=="CUSTOMER");
+        if(roleCustomer==null) return false;
         var newUser = new User
         {
             Fullname = registerDTO.Fullname,
             Email = registerDTO.Email,
             Username = registerDTO.Username,
             Status = false,
-            RoleId = 3 // ROLE 3 dành cho Customer
+            RoleId = roleCustomer.Id
         };
         newUser.Password = new PasswordHasher<User>().HashPassword(newUser, registerDTO.Password);
 
@@ -104,8 +109,9 @@ public class AuthService : IAuthService
                 Body = AuthExtentions.GenerateRegistrationSuccessEmail(newUser.Fullname, link)
             };
             await sendMailService.SendEmailAsync(newMail);
+            return true;
         }
-        return null;
+        return false;
     }
 
     public async Task<bool> RequestForgotPassword(ForgotPasswordDTO forgotPassword)
@@ -115,8 +121,9 @@ public class AuthService : IAuthService
 
         // Tạo token mới
         var newToken = Guid.NewGuid().ToString();
+        var url = config["OrignFE"]?? "linkfrontend";
         // Tạo resetLink
-        string resetPasswordLink = $"{config["OriginFE"]}/account/resetpassword?email={user.Email}&token={newToken}";
+        string resetPasswordLink = $"{url}/account/resetpassword?email={user.Email}&token={newToken}";
         // Check token hệ thống
         var tokenUsers = await userTokenRepository.FindAllAsync(x => x.UserId == user.Id && x.TokenType == "FORGOT PASSWORD");
         if (tokenUsers.Count()==0)

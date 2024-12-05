@@ -12,23 +12,20 @@ public class CampaignService : ICampaignService
     private readonly IBaseRepository<Campaign> campaignRepository;
     private readonly IMapper mapper;
     private readonly IAuthService authService;
-    private readonly IBaseRepository<UserPoint> userPointRepository;
     private readonly IBaseRepository<RobotCampaign> robotCampaignRepository;
     private readonly IBaseRepository<MachineCampaign> machineCampaignRepository;
-    private readonly IBaseRepository<CampaignGiftRule> gifiCampainRepository;
+    private readonly IBaseRepository<CampaignGift> gifiCampainRepository;
     public CampaignService(
         IBaseRepository<Campaign> campaignRepository,
         IMapper mapper,
         IAuthService authService,
-        IBaseRepository<UserPoint> userPointRepository,
         IBaseRepository<RobotCampaign> robotCampaignRepository,
         IBaseRepository<MachineCampaign> machineCampaignRepository,
-        IBaseRepository<CampaignGiftRule> gifiCampainRepository)
+        IBaseRepository<CampaignGift> gifiCampainRepository)
     {
         this.campaignRepository = campaignRepository;
         this.mapper = mapper;
         this.authService = authService;
-        this.userPointRepository = userPointRepository;
         this.robotCampaignRepository = robotCampaignRepository;
         this.machineCampaignRepository = machineCampaignRepository;
         this.gifiCampainRepository = gifiCampainRepository;
@@ -199,9 +196,9 @@ public class CampaignService : ICampaignService
     }
 
     // GIFT
-    public async Task<CampaignGiftRule?> AddGiftToCampaign(int campaignID, CampaignGiftRuleDTO entity)
+    public async Task<CampaignGift?> AddGiftToCampaign(int campaignID, CampaignGiftRuleDTO entity)
     {
-        var newEntity = mapper.Map<CampaignGiftRule>(entity);
+        var newEntity = mapper.Map<CampaignGift>(entity);
         newEntity.CampaignId=campaignID;
 
         await gifiCampainRepository.AddAsync(newEntity);
