@@ -31,7 +31,6 @@ builder.Services.AddScoped<IGiftService, GiftService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICampaignService, CampaignService>();
-builder.Services.AddScoped<IRewardService, RewardService>();
 builder.Services.AddScoped<ICampaignRuleService, CampaignRuleService>();
 builder.Services.AddScoped<ICampaignGiftService, CampaignGiftService>();
 builder.Services.AddScoped<IUserInteractionService, UserInteractionService>();

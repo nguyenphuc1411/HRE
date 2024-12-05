@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using HRE.Domain.Entities;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -154,5 +155,26 @@ public static class AuthExtentions
             ";
 
         return emailBody;
+    }
+
+    public static string GenerateGiftEmailBody(string fullName)
+    {
+        string email = $@"
+<html>
+<body>
+    <h2>Congratulations, {fullName}!</h2>
+    <p>We are excited to inform you that you have won a prize in our lucky draw!</p>
+    <p>Your unique QR code to claim your prize is below></p>
+    <p>To redeem your prize, simply present this QR code at the designated prize collection point. We hope you enjoy your special reward!</p>
+    <br />
+    <p>Thank you for participating in our promotion. Stay tuned for more exciting opportunities!</p>
+    <br />
+    <p>Best regards,</p>
+    <p>The Promotion Team</p>
+</body>
+</html>
+
+";
+        return email;
     }
 }

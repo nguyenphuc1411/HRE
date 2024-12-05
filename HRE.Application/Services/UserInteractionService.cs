@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HRE.Application.DTOs.Mail;
 using HRE.Application.DTOs.UserInteraction;
 using HRE.Application.Extentions;
 using HRE.Application.Interfaces;
@@ -16,12 +17,13 @@ public class UserInteractionService : IUserInteractionService
     private readonly IBaseRepository<QRCode> qrCodeRepository;
     private readonly IMapper mapper;
     private readonly IAuthService authService;
+    private readonly SendMailService sendMailService;
     public UserInteractionService(
         IBaseRepository<UserInteraction> repository,
         IMapper mapper, IAuthService authService,
         IBaseRepository<CampaignRule> campaignRuleRepository,
         IBaseRepository<CampaignGift> campaignGiftRepository,
-        IBaseRepository<QRCode> qrCodeRepository)
+        IBaseRepository<QRCode> qrCodeRepository, SendMailService sendMailService)
     {
         this.repository = repository;
         this.mapper = mapper;
@@ -29,6 +31,7 @@ public class UserInteractionService : IUserInteractionService
         this.campaignRuleRepository = campaignRuleRepository;
         this.campaignGiftRepository = campaignGiftRepository;
         this.qrCodeRepository = qrCodeRepository;
+        this.sendMailService = sendMailService;
     }
 
     public async Task<UserInteraction?> StartInteraction(StartUserInteractionDTO createInteraction)
@@ -124,10 +127,27 @@ public class UserInteractionService : IUserInteractionService
                     var fileName = interaction.Id.ToString()+selectedGift.GiftId.ToString();
 
                     // Gửi mail cho người dùng trúng thưởng
-
-
-
-
+                    var user = await repository.AsQueryable().Where(x => x.UserId == interaction.UserId)
+                        .Select(x => x.User).FirstOrDefaultAsync();
+                    if(user != null)
+                    {
+                        var mailRequest = new MailRequest
+                        {
+                            Subject = "Order Placed Successfully",
+                            ToEmail = user.Email,
+                            Body = AuthExtentions.GenerateGiftEmailBody(user.Fullname),
+                            Attachments = new List<Attachment>()
+                            {
+                                new Attachment
+                                {
+                                    FileName = "QRCode.png",
+                                    FileData = byteQRCode,
+                                    ContentType = "image/png"
+                                }
+                            }
+                        };
+                        await sendMailService.SendEmailAsync(mailRequest);
+                    }
                     var filePath = await QRCodeService.SaveQRCodeToFile(byteQRCode,fileName);
                     var newQRCode = new QRCode()
                     {
