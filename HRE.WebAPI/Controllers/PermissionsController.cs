@@ -18,6 +18,7 @@ namespace HRE.WebAPI.Controllers
         {
             this.permissionService = permissionService;
         }
+        [RequiredPermission("Tạo vai trò mới")]
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] PermissionDTO entity)
         {
@@ -26,6 +27,7 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
+        [RequiredPermission("Cập nhật thông tin vai trò")]
         [HttpPut("{id}")]
         public async Task<ActionResult> Update([FromRoute] int id,[FromBody] PermissionDTO entity)
         {
@@ -33,6 +35,7 @@ namespace HRE.WebAPI.Controllers
            
             return result ? NoContent(): BadRequest();
         }
+        [RequiredPermission("Xóa vai trò")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete([FromRoute] int id)
         {
@@ -40,11 +43,13 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
+        [RequiredPermission("Xem danh sách vai trò")]
         [HttpGet]
         public async Task<ActionResult<PaginatedModel<Permission>>> Get([FromQuery] QueryModel query)
         {
             return Ok(await permissionService.GetAll(query));
         }
+        [RequiredPermission("Xem chi tiết thông tin vai trò")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Permission>> GetByID([FromRoute]int id)
         {
@@ -52,6 +57,7 @@ namespace HRE.WebAPI.Controllers
             if(result == null) return NotFound();
             return Ok(result);
         }
+        [RequiredPermission("Tạo vai trò mới")]
         // Group
         [HttpPost("/api/groups")]
         public async Task<ActionResult> CreateGroup([FromBody] GroupDTO entity)
@@ -61,7 +67,7 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
-        [RequiredPermission("")]
+        [RequiredPermission("Cập nhật thông tin vai trò")]
         [HttpPut("/api/groups/{id}")]
         public async Task<ActionResult> UpdateGroup([FromRoute] int id, [FromBody] GroupDTO entity)
         {
@@ -69,7 +75,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-        [RequiredPermission("")]
+        [RequiredPermission("Xóa vai trò")]
         [HttpDelete("/api/groups/{id}")]
         public async Task<ActionResult> DeleteGroup([FromRoute] int id)
         {
@@ -77,13 +83,13 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-        [RequiredPermission("")]
+        [RequiredPermission("Xem danh sách vai trò")]
         [HttpGet("/api/groups")]
         public async Task<ActionResult<IEnumerable<PermissionGroup>>> GetGroup([FromQuery]QueryModel query)
         {
             return Ok(await permissionService.GetAllGroup(query));
         }
-        [RequiredPermission("")]
+        [RequiredPermission("Xem chi tiết thông tin vai trò")]
         [HttpGet("/api/groups/{id}")]
         public async Task<ActionResult<Permission>> GetGroupByID([FromRoute] int id)
         {

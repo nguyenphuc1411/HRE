@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.UserInteraction;
 using HRE.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ namespace HRE.WebAPI.Controllers
         {
             this.service = service;
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<UserInteractionsController>> Start([FromBody] StartUserInteractionDTO startUserInteraction)
         {

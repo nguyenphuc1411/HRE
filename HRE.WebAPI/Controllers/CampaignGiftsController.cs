@@ -17,6 +17,7 @@ namespace HRE.WebAPI.Controllers
         {
             this.service = service;
         }
+
         [HttpGet("{campaignID}/gifts")]
         public async Task<ActionResult<IEnumerable<CampaignGift>>> GetGiftsFromCampaign([FromRoute] int campaignID)
         {
@@ -24,7 +25,7 @@ namespace HRE.WebAPI.Controllers
             return Ok(result);
         }
 
-        [RequiredPermission("")]
+        [RequiredPermission("Cập nhật thông tin chiến dịch")]
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CampaignGiftDTO campaignGiftRuleDTO)
         {
@@ -32,7 +33,7 @@ namespace HRE.WebAPI.Controllers
             if (result == null) return BadRequest();
             return Ok(result);
         }
-        [RequiredPermission("")]
+        [RequiredPermission("Cập nhật thông tin chiến dịch")]
         [HttpPut("{id}")]
         public async Task<ActionResult> Update([FromRoute] int id, [FromBody] CampaignGiftDTO campaignGiftRuleDTO)
         {
@@ -40,7 +41,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-        [RequiredPermission("")]
+        [RequiredPermission("Cập nhật thông tin chiến dịch")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete([FromRoute] int id)
         {

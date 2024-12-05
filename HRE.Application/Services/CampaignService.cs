@@ -59,10 +59,28 @@ public class CampaignService : ICampaignService
         return campaigns;
     }
 
-    public Task<GetCampaignDetailDTO> GetByID(int id)
+    public async Task<GetCampaignDetailDTO?> GetByID(int id)
     {
-        throw new NotImplementedException();
+        var data = await campaignRepository.AsQueryable()
+             .Where(x => x.Id == id)
+             .Select(c => new GetCampaignDetailDTO
+             {
+                 Id = c.Id,
+                 CampaignName = c.CampaignName,
+                 StartDate = c.StartDate,
+                 EndDate = c.EndDate,
+                 Description = c.Description,
+                 LocationId = c.LocationId,
+                 TotalGifts = c.CampaignGifts.Sum(x=>x.InitialQuantity),
+                 TotalGiftsWon = c.UserInteractions.Where(x=>x.IsWon==true).Count(),
+                 TotalGiftsDistributed = c.UserInteractions.Where(x => x.IsWon == true && x.QRCode.GiftRedemption!=null).Count(),
+                 TotalGiftsNotDistributed = c.UserInteractions.Where(x=>x.IsWon==true &&x.QRCode.ExpirationDate>DateTime.Now).Count(),
+                 TotalExpiredGifts = c.UserInteractions.Where(x => x.IsWon == true && x.QRCode.ExpirationDate < DateTime.Now).Count(),
+                 TotalGiftsInStock = c.CampaignGifts.Sum(x => x.InitialQuantity)- c.CampaignGifts.Sum(x => x.InitialQuantity)
+             }).FirstOrDefaultAsync();
+        return data;
     }
+
 
     public async Task<Campaign?> Create(CampaignDTO entity)
     {

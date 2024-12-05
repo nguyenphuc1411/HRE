@@ -1,6 +1,7 @@
 ﻿using HRE.Application.DTOs.GiftRedemption;
 using HRE.Application.Interfaces;
 using HRE.Domain.Entities;
+using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace HRE.WebAPI.Controllers
         {
             this.service = service;
         }
-
+        [RequiredPermission("PG")]
         [HttpPost]
         public async Task<ActionResult<GiftRedemption>> Create([FromBody] RedemptionDTO redemptionDTO)
         {
@@ -24,7 +25,7 @@ namespace HRE.WebAPI.Controllers
             if (result == null) return BadRequest();
             return Ok(result);
         }
-
+        [RequiredPermission("PG")]
         [HttpPost("return")]
         public async Task<ActionResult<GiftRedemption>> ReturnGift([FromBody] ReturnDTO returnDTO)
         {

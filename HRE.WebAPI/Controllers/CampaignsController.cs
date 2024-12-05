@@ -27,7 +27,7 @@ namespace HRE.WebAPI.Controllers
         }
         [RequiredPermission("Xem chi tiết thông tin chiến dịch")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetCampaignDetailDTO>> GetByID([FromQuery] int id)
+        public async Task<ActionResult<GetCampaignDetailDTO>> GetByID([FromRoute] int id)
         {
             var result = await campaignService.GetByID(id);
             if (result == null) return NotFound();

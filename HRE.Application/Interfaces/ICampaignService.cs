@@ -11,7 +11,7 @@ public interface ICampaignService
     Task<bool> Update(int id, CampaignDTO entity);
     Task<bool> Delete(int id);
     Task<PaginatedModel<GetCampaignDTO>> Get(QueryModel query);
-    Task<GetCampaignDetailDTO> GetByID(int id);
+    Task<GetCampaignDetailDTO?> GetByID(int id);
 
     // Robot
     Task<bool> AddRobotsToCampaign(int id,List<int> robotIDs);
