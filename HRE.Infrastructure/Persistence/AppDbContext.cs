@@ -19,6 +19,7 @@ namespace HRE.Infrastructure.Persistence
         public required DbSet<RobotCampaign> RobotCampaigns { get; set; }
         public required DbSet<MachineCampaign> MachineCampaigns { get; set; }
         public required DbSet<Campaign> Campaigns { get; set; }
+        public required DbSet<CampaignRule> CampaignRules { get; set; }
         public required DbSet<UserInteraction> UserInteractions { get; set; }
         public required DbSet<QRCode> QRCodes { get; set; }
         public required DbSet<GiftRedemption> GiftRedemptions { get; set; }
@@ -99,6 +100,15 @@ namespace HRE.Infrastructure.Persistence
             {
                 options.HasMany(x => x.GiftInRules).WithOne(x => x.GiftRule).HasForeignKey(x => x.RuleId);
             });
+
+
+            modelBuilder.Entity<CampaignRule>(options =>
+            {
+                options.HasKey(x=>new {x.CampaignId, x.RuleId});
+                options.HasOne(x => x.Campaign).WithMany(x => x.CampaignRules).HasForeignKey(x => x.CampaignId);
+                options.HasOne(x => x.GiftRule).WithMany(x => x.CampaignRules).HasForeignKey(x => x.RuleId);
+            });
+
 
             // Area
             modelBuilder.Entity<Area>(options =>

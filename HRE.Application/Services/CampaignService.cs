@@ -4,6 +4,7 @@ using HRE.Application.DTOs.Campaign;
 using HRE.Application.Interfaces;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace HRE.Application.Services;
 
@@ -14,7 +15,6 @@ public class CampaignService : ICampaignService
     private readonly IAuthService authService;
     private readonly IBaseRepository<RobotCampaign> robotCampaignRepository;
     private readonly IBaseRepository<MachineCampaign> machineCampaignRepository;
-    private readonly IBaseRepository<CampaignGift> gifiCampainRepository;
     public CampaignService(
         IBaseRepository<Campaign> campaignRepository,
         IMapper mapper,
@@ -28,7 +28,6 @@ public class CampaignService : ICampaignService
         this.authService = authService;
         this.robotCampaignRepository = robotCampaignRepository;
         this.machineCampaignRepository = machineCampaignRepository;
-        this.gifiCampainRepository = gifiCampainRepository;
     }
 
     public async Task<Campaign?> Create(CampaignDTO entity)
@@ -193,35 +192,6 @@ public class CampaignService : ICampaignService
             await machineCampaignRepository.RollbackTransactionAsync();
             throw new Exception(ex.Message);
         }
-    }
-
-    // GIFT
-    public async Task<CampaignGift?> AddGiftToCampaign(int campaignID, CampaignGiftRuleDTO entity)
-    {
-        var newEntity = mapper.Map<CampaignGift>(entity);
-        newEntity.CampaignId=campaignID;
-
-        await gifiCampainRepository.AddAsync(newEntity);
-
-        var result = await gifiCampainRepository.SaveChangesAsync();
-        return result > 0 ? newEntity:null;
-    }
-    public async Task<bool> UpdateGiftInCampaign(int id, CampaignGiftRuleDTO entity)
-    {
-        var entityToUpdate = await gifiCampainRepository.GetByIdAsync(id);
-        if (entityToUpdate == null) return false;
-        mapper.Map(entity, entityToUpdate);
-        gifiCampainRepository.Update(entityToUpdate);
-
-        return await gifiCampainRepository.SaveChangesAsync() > 0;
-    }
-
-    public async Task<bool> RemoveGiftInCampaign(int id)
-    {
-        var entityToDelete = await gifiCampainRepository.GetByIdAsync(id);
-        if (entityToDelete == null) return false;
-        gifiCampainRepository.Delete(entityToDelete);
-        return await gifiCampainRepository.SaveChangesAsync() > 0;
     }
 }
 

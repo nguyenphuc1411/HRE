@@ -49,10 +49,13 @@ namespace HRE.WebAPI.Controllers
             return Ok(result);
         }
 
+        [RequiredPermission("Xem chi tiết thông tin máy tái chế")]
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetByID([FromRoute]int id)
+        public async Task<ActionResult<GetRMDetailDTO>> GetByID([FromRoute] int id)
         {
-            return Ok();
+            var result = await recyclingMachineService.GetByID(id);
+            if(result == null) return NotFound();
+            return Ok(result);
         }
     }
 }

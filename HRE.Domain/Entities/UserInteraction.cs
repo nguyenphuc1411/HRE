@@ -16,15 +16,16 @@ public class UserInteraction
     public int? GiftId { get; set; }
     public Gift? Gift { get; set; }
 
-    public DateTime StartTime { get; set; }
+    public DateTime StartTime { get; set; } = DateTime.Now;
+    public DateTime? EndTime { get; set; }
 
-    public int PointEarned { get; set; }
+    public int? PointEarned { get; set; }
 
-    public bool IsSpun { get; set; }
+    public bool IsSpun { get; set; }= false;
 
-    public bool IsWon { get; set; }
+    public bool? IsWon { get; set; }
 
-    public DateTime CreatedDate { get; set; } = DateTime.Now;
+    public DateTime? SpunDate { get; set; } 
 
     public QRCode? QRCode { get; set; }
 }

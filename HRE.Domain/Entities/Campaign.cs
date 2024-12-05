@@ -17,4 +17,5 @@ public class Campaign
     public ICollection<MachineCampaign> MachineCampaigns { get; set; } = default!;
     public ICollection<UserInteraction> UserInteractions { get; set; } = default!;
     public ICollection<CampaignGift> CampaignGifts { get; set; } = default!;
+    public ICollection<CampaignRule> CampaignRules { get; set; } = default!;
 }

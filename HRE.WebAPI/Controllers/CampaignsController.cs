@@ -96,31 +96,5 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-
-        // GIFT
-        [RequiredPermission("")]
-        [HttpPost("{campaignID}/gifts")]
-        public async Task<ActionResult> AddGiftToCampaign([FromRoute] int campaignID, [FromBody] CampaignGiftRuleDTO campaignGiftRuleDTO)
-        {        
-            var result = await campaignService.AddGiftToCampaign(campaignID, campaignGiftRuleDTO);
-            if (result == null) return BadRequest();
-            return Ok(result);
-        }
-        [RequiredPermission("")]
-        [HttpPut("gifts/{id}")]
-        public async Task<ActionResult> AddGiftFromCampaign([FromRoute] int id, [FromBody] CampaignGiftRuleDTO campaignGiftRuleDTO)
-        {         
-            bool result = await campaignService.UpdateGiftInCampaign(id, campaignGiftRuleDTO);
-
-            return result ? NoContent() : BadRequest();
-        }
-        [RequiredPermission("")]
-        [HttpDelete("gifts/{id}")]
-        public async Task<ActionResult> RemoveGiftFromCampaign([FromRoute] int id)
-        {
-            bool result = await campaignService.RemoveGiftInCampaign(id);
-
-            return result ? NoContent() : BadRequest();
-        }
     }
 }

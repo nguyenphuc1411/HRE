@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.Gift;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
@@ -39,6 +40,20 @@ namespace HRE.WebAPI.Controllers
         {
             bool result = await giftService.Delete(id);
             return result ? NoContent() : BadRequest();
+        }
+        [RequiredPermission("Xem danh sách quà tặng")]
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] QueryModel query)
+        {
+            return Ok(await giftService.Get(query));
+        }
+        [RequiredPermission("Xem chi tiết thông tin quà tặng")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByID([FromRoute] int id)
+        {
+            var result = await giftService.GetByID(id);
+            if(result== null) return NotFound();
+            return Ok(result);
         }
     }
 }

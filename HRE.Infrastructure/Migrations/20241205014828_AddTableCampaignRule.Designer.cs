@@ -4,6 +4,7 @@ using HRE.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRE.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241205014828_AddTableCampaignRule")]
+    partial class AddTableCampaignRule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,7 +104,7 @@ namespace HRE.Infrastructure.Migrations
                     b.Property<int>("QuantityGiven")
                         .HasColumnType("int");
 
-                    b.Property<int>("WonQuantity")
+                    b.Property<int>("WinningRate")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -609,7 +612,7 @@ namespace HRE.Infrastructure.Migrations
                     b.Property<int>("CampaignId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("EndTime")
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("GiftId")
@@ -618,17 +621,14 @@ namespace HRE.Infrastructure.Migrations
                     b.Property<bool>("IsSpun")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("IsWon")
+                    b.Property<bool>("IsWon")
                         .HasColumnType("bit");
 
                     b.Property<int>("MachineId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PointEarned")
+                    b.Property<int>("PointEarned")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("SpunDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");

@@ -7,7 +7,7 @@ public class CampaignGift
     public Campaign Campaign { get; set; } = default!;
     public int GiftId { get; set; }
     public Gift Gift { get; set; } = default!;
-    public int WinningRate { get; set; }
     public int InitialQuantity { get; set; } = 0;
     public int QuantityGiven { get; set; } = 0;
+    public int WonQuantity { get; set; } = 0;
 }

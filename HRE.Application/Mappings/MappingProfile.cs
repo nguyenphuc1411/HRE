@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using HRE.Application.DTOs.Area;
 using HRE.Application.DTOs.Campaign;
+using HRE.Application.DTOs.CampaignRule;
 using HRE.Application.DTOs.Gift;
+using HRE.Application.DTOs.GiftRedemption;
 using HRE.Application.DTOs.GiftRule;
 using HRE.Application.DTOs.Location;
 using HRE.Application.DTOs.Permission;
@@ -10,6 +12,7 @@ using HRE.Application.DTOs.Reward;
 using HRE.Application.DTOs.Robot;
 using HRE.Application.DTOs.Role;
 using HRE.Application.DTOs.User;
+using HRE.Application.DTOs.UserInteraction;
 using HRE.Application.DTOs.UserPoint;
 using HRE.Domain.Entities;
 
@@ -57,6 +60,15 @@ public class MappingProfile:Profile
         // Campaign 
         CreateMap<CampaignDTO,Campaign>();
 
-        CreateMap<CampaignGiftRuleDTO, CampaignGift>();
+        CreateMap<CampaignGiftDTO, CampaignGift>();
+
+        // Campaign Rule
+        CreateMap<CampaignRuleDTO,CampaignRule>();
+
+        // User Interaction
+        CreateMap<StartUserInteractionDTO, UserInteraction>();
+
+        // Redemption
+        CreateMap<RedemptionDTO,GiftRedemption>();
     }
 }

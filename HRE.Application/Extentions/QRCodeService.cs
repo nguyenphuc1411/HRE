@@ -17,4 +17,26 @@ public static class QRCodeService
         }
         return QRCode;
     }
+
+    public static async Task<string> SaveQRCodeToFile(byte[] qrCodeBytes, string fileName)
+    {
+        // Lấy thư mục wwwroot
+        var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+        // Tạo thư mục để lưu nếu chưa có
+        var folderPath = Path.Combine(wwwRootPath, "qrcodes");
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
+
+        // Đường dẫn tệp ảnh QR code
+        var filePath = Path.Combine(folderPath, fileName);
+
+        // Lưu mã QR dưới dạng file PNG
+        await File.WriteAllBytesAsync(filePath, qrCodeBytes);
+
+        // Trả về đường dẫn URL tới file trong thư mục wwwroot
+        return $"/qrcodes/{fileName}";
+    }
 }

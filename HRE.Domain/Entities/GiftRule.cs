@@ -15,4 +15,5 @@ public class GiftRule
     public DateTime DateAdded { get; set; } = DateTime.Now;
 
     public ICollection<GiftInRule> GiftInRules { get; set; } = default!;
+    public ICollection<CampaignRule> CampaignRules { get; set; } = default!;
 }
