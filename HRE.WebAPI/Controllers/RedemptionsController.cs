@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.GiftRedemption;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +26,20 @@ namespace HRE.WebAPI.Controllers
             if (result == null) return BadRequest();
             return Ok(result);
         }
+        [HttpGet]
+        public async Task<ActionResult<PaginatedModel<GiftRedemption>>> GetHistoryRedemption([FromQuery]QueryModel query)
+        {
+            var result = await service.GetHistoryRedemption(query);
+            return Ok(result);
+        }
+
+        [HttpGet("return")]
+        public async Task<ActionResult<PaginatedModel<GiftRedemption>>> GetHistoryReturn([FromQuery] QueryModel query)
+        {
+            var result = await service.GetHistoryReturn(query);
+            return Ok(result);
+        }
+
         [RequiredPermission("PG")]
         [HttpPost("return")]
         public async Task<ActionResult<GiftRedemption>> ReturnGift([FromBody] ReturnDTO returnDTO)

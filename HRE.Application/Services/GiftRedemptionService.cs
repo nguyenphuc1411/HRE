@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using HRE.Application.DTOs.GiftRedemption;
+using HRE.Application.Extentions;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +48,16 @@ public class GiftRedemptionService : IGiftRedemptionService
             return newEntity;
         }
         return null;
+    }
+
+    public async Task<PaginatedModel<GiftRedemption>> GetHistoryRedemption(QueryModel query)
+    {
+        return await repository.AsQueryable().ApplyQuery(query);
+    }
+
+    public async Task<PaginatedModel<GiftReturn>> GetHistoryReturn(QueryModel query)
+    {
+        return await returnRepository.AsQueryable().ApplyQuery(query);
     }
 
     public async Task<GiftReturn?> ReturnGift(ReturnDTO returnDTO)
