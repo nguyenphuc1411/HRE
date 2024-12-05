@@ -1,33 +1,67 @@
 ﻿
 using AutoMapper;
 using HRE.Application.DTOs.Campaign;
+using HRE.Application.Extentions;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRE.Application.Services;
 
-public class CampaignService : ICampaignService
+public class CampaignService : ICampaignService 
 {
     private readonly IBaseRepository<Campaign> campaignRepository;
     private readonly IMapper mapper;
-    private readonly IAuthService authService;
     private readonly IBaseRepository<RobotCampaign> robotCampaignRepository;
     private readonly IBaseRepository<MachineCampaign> machineCampaignRepository;
     public CampaignService(
         IBaseRepository<Campaign> campaignRepository,
         IMapper mapper,
-        IAuthService authService,
         IBaseRepository<RobotCampaign> robotCampaignRepository,
         IBaseRepository<MachineCampaign> machineCampaignRepository,
         IBaseRepository<CampaignGift> gifiCampainRepository)
     {
         this.campaignRepository = campaignRepository;
         this.mapper = mapper;
-        this.authService = authService;
         this.robotCampaignRepository = robotCampaignRepository;
         this.machineCampaignRepository = machineCampaignRepository;
+    }
+    public async Task<PaginatedModel<GetCampaignDTO>> Get(QueryModel query)
+    {
+        var campaigns = await campaignRepository.AsQueryable()
+            .Select(x => new
+            {
+                x.Id,
+                x.CampaignName,
+                x.StartDate,
+                x.EndDate,
+                x.Description,
+                x.LocationId,
+                UserInteractions = x.UserInteractions.Count(),
+                QRCodeCount = x.UserInteractions.Select(u => u.QRCode).Count() // Giả sử có trường QRCodeInteractions trong UserInteractions
+            })
+            .GroupBy(x => x.Id)
+            .Select(group => new GetCampaignDTO
+            {
+                Id = group.Key,
+                CampaignName = group.FirstOrDefault().CampaignName,
+                StartDate = group.FirstOrDefault().StartDate,
+                EndDate = group.FirstOrDefault().EndDate,
+                Description = group.FirstOrDefault().Description,
+                LocationId = group.FirstOrDefault().LocationId,
+                TotalInteraction = group.Sum(x => x.UserInteractions),  // Tổng số lượt tương tác
+                TotalQRCode = group.Sum(x => x.QRCodeCount)           // Tổng số QR code đã tạo
+            })
+            .ApplyQuery(query, x => x.CampaignName);
+
+        return campaigns;
+    }
+
+    public Task<GetCampaignDetailDTO> GetByID(int id)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<Campaign?> Create(CampaignDTO entity)

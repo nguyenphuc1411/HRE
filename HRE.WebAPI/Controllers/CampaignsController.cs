@@ -1,5 +1,6 @@
 ﻿using HRE.Application.DTOs.Campaign;
 using HRE.Application.Interfaces;
+using HRE.Application.Models;
 using HRE.Domain.Entities;
 using HRE.WebAPI.Attributes;
 using Microsoft.AspNetCore.Http;
@@ -17,8 +18,22 @@ namespace HRE.WebAPI.Controllers
         {
             this.campaignService = campaignService;
         }
-
-        [RequiredPermission("")]
+        [RequiredPermission("Xem danh sách chiến dịch")]
+        [HttpGet]
+        public async Task<ActionResult<PaginatedModel<GetCampaignDTO>>> Get([FromQuery] QueryModel query)
+        {
+            var result = await campaignService.Get(query);
+            return Ok(result);
+        }
+        [RequiredPermission("Xem chi tiết thông tin chiến dịch")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GetCampaignDetailDTO>> GetByID([FromQuery] int id)
+        {
+            var result = await campaignService.GetByID(id);
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+        [RequiredPermission("Tạo chiến dịch mới")]
         [HttpPost]
         public async Task<ActionResult<Campaign>> Create([FromBody] CampaignDTO entity)
         {
@@ -27,14 +42,14 @@ namespace HRE.WebAPI.Controllers
 
             return Ok(result);
         }
-        [RequiredPermission("")]
+        [RequiredPermission("Cập nhật thông tin chiến dịch")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] CampaignDTO entity)
         {
             bool result = await campaignService.Update(id, entity);
             return result ? NoContent() : BadRequest();
         }
-        [RequiredPermission("")]
+        [RequiredPermission("Xóa chiến dịch")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
@@ -42,7 +57,7 @@ namespace HRE.WebAPI.Controllers
             return result ? NoContent() : BadRequest();
         }
 
-        [RequiredPermission("")]
+        [RequiredPermission("Cập nhật thông tin chiến dịch")]
         // ROBOT
         [HttpPost("{id}/robots")]
         public async Task<ActionResult> AddRobotsToCampaign([FromRoute]int id, [FromBody] List<int> robotIDs)
@@ -56,7 +71,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? Ok() : BadRequest();
         }
-        [RequiredPermission("")]
+        [RequiredPermission("Cập nhật thông tin chiến dịch")]
         [HttpDelete("{id}/robots")]
         public async Task<ActionResult> RemoveRobotsFromCampaign([FromRoute] int id, [FromBody] List<int> robotIDs)
         {
@@ -69,7 +84,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? NoContent() : BadRequest();
         }
-        [RequiredPermission("")]
+        [RequiredPermission("Cập nhật thông tin chiến dịch")]
         // MACHINE
         [HttpPost("{id}/recycling-machines")]
         public async Task<ActionResult> AddRMsToCampaign([FromRoute] int id, [FromBody] List<int> machineIDs)
@@ -83,7 +98,7 @@ namespace HRE.WebAPI.Controllers
 
             return result ? Ok() : BadRequest();
         }
-        [RequiredPermission("")]
+        [RequiredPermission("Cập nhật thông tin chiến dịch")]
         [HttpDelete("{id}/recycling-machines")]
         public async Task<ActionResult> RemoveMsFromCampaign([FromRoute] int id, [FromBody] List<int> machineIDs)
         {
